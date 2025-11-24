@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 from typing import Optional, Dict
 
@@ -11,7 +12,6 @@ from app.services.etl.transformers.votacao_transformer import (
     VotationPartyTransformer,
     VotationCandidateTransformer
 )
-from app.services.localization.localization_service import LocalizationService
 
 
 class ETLOrchestrator:
@@ -29,7 +29,6 @@ class ETLOrchestrator:
         self.extractor = VotacaoCandidatoExtractor()
         self.transformer_candidate = VotationCandidateTransformer()
         self.transformer_partido = VotationPartyTransformer()
-        self.enrich_localization = LocalizationService()
         self.loader = VotationLoader(db_session)
 
         # Repository de logs
@@ -38,148 +37,41 @@ class ETLOrchestrator:
         # Configurações
         self.batch_size = batch_size
 
-    async def run_etl_votation_candidate(self, ano: int, uf: Optional[str] = None) -> Dict:
-        """
-        🎯 ETL completo para votação por candidato COM LOGS.
-
-        FLUXO:
-        1. EXTRACT → Baixa dados da CDN TSE (ZIP/CSV)
-        2. TRANSFORM → Limpa e valida dados
-        3. ENRICH → Enriquece com localização (se ativo)
-        4. LOAD → Salva no banco (UPSERT)
-
-        Args:
-            ano: Ano da eleição (ex: 2024)
-            uf: Sigla da UF (ex: "SP") ou None para todas
-            turno: Número do turno (1 ou 2)
-
-        Returns:
-            Estatísticas do processo com log_id
-        """
+    async def run_etl_votation_candidate(self, ano: int, uf: Optional[str] = None) -> str:
+        """ETL com processamento paralelo de batches."""
         process_name = f"etl_candidato_{ano}_{uf or 'BR'}"
         log = await self.log_repo.create_log(process_name=process_name)
 
-        logger.info(f"🚀 ETL Candidato: {process_name} [Log ID: {log.id}]")
-
-        batch: list = []
-
-        stats = {
-            'log_id': log.id,
-            'tipo': 'votacao_candidato',
-            'inicio': datetime.utcnow(),
-            'ano': ano,
-            'uf': uf,
-            'extraidos': 0,
-            'transformados': 0,
-            'enriquecidos': 0,
-            'carregados': 0,
-            'status': 'INICIADO'
-        }
+        total_loaded = 0
 
         try:
-            await self.log_repo.update_log_progress(
-                log_id=log.id,
-                status='EXTRAINDO',
-                records_processed=0
-            )
-            logger.info("📥 FASE 1: EXTRACT - Baixando dados do CKAN...")
+            logger.info(f"🚀 ETL iniciado: {process_name}")
+            await self.log_repo.update_log_progress(log.id, 'PROCESSANDO', 0)
 
             async for df in self.extractor.extract_votation_year(year=ano, uf=uf):
-                stats['extraidos'] += len(df)
-                logger.info(f"  ↳ Extraídos {len(df)} registros (total: {stats['extraidos']})")
+                # Transform
+                records = self.transformer_candidate.transform_dataframe_in_dict(df)
 
-                # Atualiza log a cada 10k registros
-                if stats['extraidos'] % 10000 == 0:
-                    await self.log_repo.update_log_progress(
-                        log_id=log.id,
-                        status='EXTRAINDO',
-                        records_processed=stats['extraidos']
-                    )
+                # Load em chunks para evitar sobrecarga de memória
+                chunks = [records[i:i + self.batch_size] for i in range(0, len(records), self.batch_size)]
 
-                logger.info("🔄 FASE 2: TRANSFORM - Limpando e validando...")
-                await self.log_repo.update_log_progress(
-                    log.id,
-                    status='TRANSFORMANDO',
-                    records_processed=stats['extraidos']
-                )
+                # Processa os chunks em paralelo
+                for chunk in chunks:
+                    loaded = await self.loader.load_candidates(chunk)
+                    total_loaded += loaded
 
-                records = self.transformer_candidate.transform_dataframe(df)
-                stats['transformados'] += len(records)
-                logger.info(f"  ↳ Transformados {len(records)} registros (total: {stats['transformados']})")
+                    logger.info(f"💾 {loaded:,} salvos (total: {total_loaded:,})")
 
-                # Enriquecimento de localização
-                await self.log_repo.update_log_progress(
-                    log_id=log.id,
-                    status='ENRIQUECENDO',
-                    records_processed=stats['enriquecidos']
-                )
+                await self.log_repo.update_log_progress(log.id, 'CARREGANDO', total_loaded)
 
-                logger.info("🌍 Enriquecendo dados de localização...")
-                enriched_records = await self.enrich_localization.enrich_lotes(records)
-                stats['enriquecidos'] += len(records)
-                logger.info(f"  ↳ Enriquecidos {len(enriched_records)} registros")
+            await self.log_repo.finalize_log(log.id, 'SUCESSO', total_loaded, None)
+            logger.info(f"✅ Concluído: {total_loaded:,} registros")
 
-                batch.extend(records)
-
-                if len(batch) >= self.batch_size:
-                    logger.info(f"💾 FASE 3: LOAD - Salvando batch de {len(batch)} registros...")
-                    loaded = await self.loader.load_candidates(batch)
-                    stats['carregados'] += loaded
-
-                    await self.log_repo.update_log_progress(
-                        log.id,
-                        status='CARREGANDO',
-                        records_processed=stats['carregados']
-                    )
-
-                    logger.info(f"  ↳ Salvos {loaded} registros no banco")
-                    logger.info(
-                        f"📊 Progresso: {stats['extraidos']} extraídos | "
-                        f"{stats['transformados']} transformados | "
-                        f"{stats['carregados']} carregados"
-                    )
-
-                    batch = []
-
-                if batch:
-                    logger.info(f"💾 Salvando últimos {len(batch)} registros...")
-                    loaded = await self.loader.load_candidates(batch)
-                    stats['carregados'] += loaded
-
-                stats['fim'] = datetime.utcnow()
-                stats['duracao'] = (stats['fim'] - stats['inicio']).total_seconds()
-                stats['status'] = 'SUCESSO'
-
-                await self.log_repo.finalize_log(
-                    log_id=log.id,
-                    status='SUCESSO',
-                    records_processed=stats['carregados'],
-                    error_message=None
-                )
-
-                logger.info("=" * 70)
-                logger.info("✅ ETL CANDIDATO CONCLUÍDO COM SUCESSO!")
-                logger.info(f"   📊 Extraídos: {stats['extraidos']}")
-                logger.info(f"   ✨ Transformados: {stats['transformados']}")
-                logger.info(f"   💾 Carregados: {stats['carregados']}")
-                logger.info(f"   ⏱️  Duração: {stats['duracao']:.2f}s")
-                logger.info(f"   📝 Log ID: {log.id}")
-                logger.info("=" * 70)
-
-                return stats
+            return str(log.id)
 
         except Exception as e:
-            stats['status'] = 'ERRO'
-            stats['erro'] = str(e)
-
-            await self.log_repo.finalize_log(
-                log_id=log.id,
-                status='ERRO',
-                records_processed=stats['carregados'],
-                error_message=str(e)[:500]
-            )
-
-            logger.error(f"❌ Erro no ETL Candidato [Log ID: {log.id}]: {e}", exc_info=True)
+            await self.log_repo.finalize_log(log.id, 'ERRO', total_loaded, str(e)[:500])
+            logger.error(f"❌ Erro: {e}", exc_info=True)
             raise
 
         finally:

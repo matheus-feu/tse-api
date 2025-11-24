@@ -7,100 +7,92 @@ from loguru import logger
 class VotationCandidateTransformer:
     """Transforma dados de votação por candidato."""
 
-    @classmethod
-    def transform_dataframe(cls, df: pd.DataFrame) -> List[Dict]:
-        """
-        Transforma DataFrame em dicionários prontos para carga.
+    COLUMN_MAPPING = [
+        'nr_turno',
+        'ano_eleicao',
+        'cd_eleicao',
+        'dt_eleicao',
+        'sg_uf',
+        'sg_ue',
+        'nm_ue',
+        'cd_municipio',
+        'nm_municipio',
+        'nr_zona',
+        'zona_eleitoral_id',
+        'endereco_zona',
+        'bairro_zona',
+        'cep_zona',
+        'telefone_zona',
+        'ds_cargo',
+        'nr_candidato',
+        'nm_candidato',
+        'nm_social_candidato',
+        'nr_partido',
+        'sg_partido',
+        'nm_partido',
+        'qt_votos_nominais',
+        'qt_votos_nominais_validos',
+    ]
 
-        Aplica:
-        - Limpeza de linhas vazias
-        - Renomeação de colunas
-        - Conversão de tipos
-        - Padronização de strings
-        - Validação de dados obrigatórios
-        - Criação de campos derivados
+    TYPE_MAPPING = {
+        'nr_turno': 'int',
+        'ano_eleicao': 'int',
+        'cd_eleicao': 'int',
+        'cd_municipio': 'int',
+        'nr_zona': 'int',
+        'nr_candidato': 'int',
+        'nr_partido': 'int',
+        'qt_votos_nominais': 'int',
+        'qt_votos_nominais_validos': 'int',
+        'dt_eleicao': 'date',
+    }
+
+    def transform_dataframe_in_dict(self, df: pd.DataFrame) -> List[Dict]:
+        """
+        Transforma DataFrame em lista de dicionários com tipos corretos.
+
+        Fluxo:
+        1. Normaliza nomes das colunas para minúsculas
+        2. Filtra colunas válidas
+        3. Converte tipos (int, date, etc)
+        4. Remove linhas vazias e duplicatas
+        5. Converte para dicionários
+        6. Remove campos nulos
         """
         logger.info("Transformando DataFrame de votação por candidato")
 
-        df = df.dropna(how='all')
+        df.columns = df.columns.str.lower()
 
-        len_before = len(df)
-        df = df.drop_duplicates()
-        if len(df) < len_before:
-            logger.info(f"Removidos {len_before - len(df)} registros duplicados")
+        available_columns = [col for col in self.COLUMN_MAPPING if col in df.columns]
+        df_filtered = df[available_columns].copy()
 
-        numeric_cols = [
-            'nr_turno', 'ano_eleicao', 'cd_eleicao', 'cd_municipio',
-            'nr_zona', 'nr_candidato', 'nr_partido',
-            'qt_votos_nominais', 'qt_votos_nominais_validos'
-        ]
-        for col in numeric_cols:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+        for col, dtype in self.TYPE_MAPPING.items():
+            if col not in df_filtered.columns:
+                continue
 
-        if 'dt_eleicao' in df.columns:
-            df['dt_eleicao'] = pd.to_datetime(
-                df['dt_eleicao'],
-                format='%d/%m/%Y',
-                errors='coerce'
-            )
+            if dtype == 'int':
+                df_filtered[col] = pd.to_numeric(df_filtered[col], errors='coerce')
+                df_filtered[col] = df_filtered[col].fillna(0).astype(int)
 
-        df['dt_eleicao'] = df['dt_eleicao'].dt.strftime('%Y-%m-%d')
-        df['dt_eleicao'] = df['dt_eleicao'].replace({'NaT': None})
+            elif dtype == 'date':
+                df_filtered[col] = pd.to_datetime(df_filtered[col], errors='coerce')
+                df_filtered[col] = df_filtered[col].dt.date
 
-        string_cols = [
-            'sg_uf', 'sg_partido', 'nm_candidato', 'nm_partido',
-            'nm_municipio', 'ds_cargo', 'ds_situacao_totalizacao'
-        ]
+        df_filtered = df_filtered.dropna(how='all').drop_duplicates()
+        records = df_filtered.to_dict(orient='records')
 
-        for col in string_cols:
-            if col in df.columns:
-                # Remove espaços e coloca em maiúsculas
-                df[col] = df[col].str.upper().str.strip()
+        cleaned_records = []
+        for record in records:
+            cleaned_record = {
+                k: v for k, v in record.items()
+                if v is not None
+                   and not (isinstance(v, str) and v.strip() == "")
+                   and not (isinstance(v, float) and pd.isna(v))
+            }
+            cleaned_records.append(cleaned_record)
 
-            # Uppercase for state codes
-            if col.startswith('sg_'):
-                df[col] = df[col].str.upper()
-
-            # Remove valores vazios
-            df[col] = df[col].replace(['', 'nan', 'None', 'NaN'], None)
-
-        required_cols = ['ano_eleicao', 'sg_uf', 'cd_municipio', 'nr_zona']
-        for col in required_cols:
-            if col in df.columns:
-                before = len(df)
-                if col in numeric_cols:
-                    df = df[df[col] > 0]
-                else:
-                    df = df[df[col].notna()]
-
-                if len(df) < before:
-                    logger.info(f"Removidos {before - len(df)} registros com {col} inválido")
-
-        # Campos derivados
-        df['zona_eleitoral_id'] = (
-                df['sg_uf'].astype(str) + '-' +
-                df['cd_municipio'].astype(str) + '-' +
-                df['nr_zona'].astype(str)
-        )
-
-        # Preparação para o enriquecimento
-        df['endereco_zona'] = None
-        df['bairro_zona'] = None
-        df['cep_zona'] = None
-        df['telefone_zona'] = None
-
-        records = df.to_dict('records')
-        logger.info(f"✅ Transformação concluída: {len(records)} registros válidos")
-
-        if records:
-            logger.debug(
-                f"  ↳ UFs: {df['sg_uf'].nunique()} | "
-                f"Municípios: {df['cd_municipio'].nunique()} | "
-                f"Zonas: {df['nr_zona'].nunique()}"
-            )
-
-        return records
+        logger.info(f"Transformados {len(cleaned_records)} registros")
+        return cleaned_records
 
 
 class VotationPartyTransformer:
@@ -154,15 +146,6 @@ class VotationPartyTransformer:
         for col in ['sg_uf', 'sg_partido']:
             if col in df.columns:
                 df[col] = df[col].str.upper().str.strip()
-
-        # Adiciona campos de localização
-        df['zona_eleitoral_id'] = df.apply(
-            lambda r: f"{r.get('sg_uf', '')}-{r.get('cd_municipio', 0)}-{r.get('nr_zona', 0)}", axis=1
-        )
-        df['endereco_zona'] = None
-        df['bairro_zona'] = None
-        df['cep_zona'] = None
-        df['telefone_zona'] = None
 
         logger.info(f"Transformados {len(df)} registros")
         return df.to_dict('records')

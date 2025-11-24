@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Optional
-from wsgiref.validate import validator
 
 from pydantic import BaseModel, Field
 
@@ -40,7 +39,6 @@ class TipoETLEnum(str, Enum):
     """Tipos de ETL disponíveis."""
     CANDIDATO = "candidato"
     PARTIDO = "partido"
-
 
 
 class ETLRequest(BaseModel):

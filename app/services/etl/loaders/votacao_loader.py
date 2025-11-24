@@ -13,7 +13,7 @@ class VotationLoader:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
         self.repo_candidate = CandidatesRepository(db_session)
-        self.repo_partie = PartiesRepository(db_session)
+        self.repo_party = PartiesRepository(db_session)
 
     async def load_candidates(self, records: List[Dict]) -> int:
         """Carrega dados de votação por candidato no banco."""
@@ -21,9 +21,7 @@ class VotationLoader:
             logger.info("Nenhum registro para carregar.")
             return 0
 
-        count = await self.repo_candidate.bulk_upsert_votes(records)
-        logger.info(f"✅ {count} registros salvos")
-        return count
+        return await self.repo_candidate.bulk_upsert_votes(records)
 
     async def load_parties(self, records: List[Dict]) -> int:
         """Carrega dados de votação por partido no banco."""
@@ -31,6 +29,4 @@ class VotationLoader:
             logger.info("Nenhum registro para carregar.")
             return 0
 
-        count = await self.repo_partie.bulk_upsert_votes(records)
-        logger.info(f"✅ {count} registros salvos")
-        return count
+        return await self.repo_party.bulk_upsert_votes(records)

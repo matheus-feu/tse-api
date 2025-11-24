@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from loguru import logger
-from sqlalchemy import select, func, and_, desc
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.etl_log import ETLLog
@@ -19,10 +19,6 @@ class ETLLogRepository:
             session: Sessão assíncrona do SQLAlchemy
         """
         self.session = session
-
-    # =========================================================================
-    # OPERAÇÕES DE CRIAÇÃO E ATUALIZAÇÃO
-    # =========================================================================
 
     async def create_log(
             self,
@@ -120,7 +116,7 @@ class ETLLogRepository:
         log.end_time = datetime.utcnow()
         log.records_processed = records_processed
         if error_message:
-            log.error_message = error_message[:500]  # Trunca se for muito grande
+            log.error_message = error_message[:500]
 
         await self.session.commit()
         await self.session.refresh(log)
@@ -132,10 +128,6 @@ class ETLLogRepository:
         )
 
         return log
-
-    # =========================================================================
-    # CONSULTAS
-    # =========================================================================
 
     async def find_by_id(self, log_id: str) -> Optional[ETLLog]:
         """
@@ -150,150 +142,3 @@ class ETLLogRepository:
         stmt = select(ETLLog).where(ETLLog.id == log_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
-
-    async def find_recent(
-            self,
-            process_name: Optional[str] = None,
-            status: Optional[str] = None,
-            limite: int = 50
-    ) -> List[ETLLog]:
-        """
-        Busca logs recentes com filtros.
-
-        Args:
-            process_name: Filtrar por nome do processo (busca parcial)
-            status: Filtrar por status
-            limite: Limite de resultados
-
-        Returns:
-            Lista de logs
-        """
-        stmt = select(ETLLog)
-
-        conditions = []
-        if process_name:
-            conditions.append(ETLLog.process_name.ilike(f"%{process_name}%"))
-        if status:
-            conditions.append(ETLLog.status == status)
-
-        if conditions:
-            stmt = stmt.where(and_(*conditions))
-
-        stmt = stmt.order_by(desc(ETLLog.start_time)).limit(limite)
-
-        result = await self.session.execute(stmt)
-        return result.scalars().all()
-
-    async def find_by_package(self, package_id: str) -> List[ETLLog]:
-        """
-        Busca logs relacionados a um package CKAN.
-
-        Args:
-            package_id: ID do package CKAN
-
-        Returns:
-            Lista de logs
-        """
-        stmt = select(ETLLog).where(
-            ETLLog.package_id == package_id
-        ).order_by(desc(ETLLog.start_time))
-
-        result = await self.session.execute(stmt)
-        return result.scalars().all()
-
-    async def get_last_success(self, process_name: str) -> Optional[ETLLog]:
-        """
-        Busca última execução bem-sucedida de um processo.
-
-        Args:
-            process_name: Nome do processo
-
-        Returns:
-            Último log com sucesso ou None
-        """
-        stmt = select(ETLLog).where(
-            and_(
-                ETLLog.process_name == process_name,
-                ETLLog.status == 'SUCESSO'
-            )
-        ).order_by(desc(ETLLog.end_time)).limit(1)
-
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
-
-    # =========================================================================
-    # ESTATÍSTICAS
-    # =========================================================================
-
-    async def get_stats(self) -> dict:
-        """
-        Retorna estatísticas gerais dos logs.
-
-        Returns:
-            Dicionário com estatísticas
-        """
-        stmt = select(
-            func.count(ETLLog.id).label('total'),
-            func.count(ETLLog.id).filter(ETLLog.status == 'SUCESSO').label('sucessos'),
-            func.count(ETLLog.id).filter(ETLLog.status == 'ERRO').label('erros'),
-            func.count(ETLLog.id).filter(ETLLog.status == 'INICIADO').label('em_andamento'),
-            func.sum(ETLLog.records_processed).label('total_registros')
-        )
-
-        result = await self.session.execute(stmt)
-        stats = result.one()
-
-        return {
-            'total_execucoes': stats.total or 0,
-            'sucessos': stats.sucessos or 0,
-            'erros': stats.erros or 0,
-            'em_andamento': stats.em_andamento or 0,
-            'total_registros_processados': stats.total_registros or 0
-        }
-
-    async def count_by_status(self) -> dict:
-        """
-        Conta logs agrupados por status.
-
-        Returns:
-            Dicionário com contagens por status
-        """
-        stmt = select(
-            ETLLog.status,
-            func.count(ETLLog.id).label('count')
-        ).group_by(ETLLog.status)
-
-        result = await self.session.execute(stmt)
-        rows = result.all()
-
-        return {row.status: row.count for row in rows}
-
-    # =========================================================================
-    # LIMPEZA
-    # =========================================================================
-
-    async def delete_old_logs(self, days: int = 30) -> int:
-        """
-        Remove logs antigos (útil para manutenção).
-
-        Args:
-            days: Manter logs dos últimos N dias
-
-        Returns:
-            Número de logs removidos
-        """
-        from datetime import timedelta
-
-        cutoff_date = datetime.utcnow() - timedelta(days=days)
-
-        stmt = select(ETLLog).where(ETLLog.start_time < cutoff_date)
-        result = await self.session.execute(stmt)
-        logs_to_delete = result.scalars().all()
-
-        for log in logs_to_delete:
-            await self.session.delete(log)
-
-        await self.session.commit()
-
-        logger.info(f"🗑️  Removidos {len(logs_to_delete)} logs antigos (>{days} dias)")
-        return len(logs_to_delete)
