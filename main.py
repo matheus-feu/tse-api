@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from alembic import command
-from app.api.v1 import tse
+from app.api.v1 import tse, votation, ckan
 from app.core.config import settings
 from app.core.database import init_db, create_database_if_not_exists
 
@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="API para extração e processamento de dados eleitorais do TSE via CKAN",
+    description="API para extração e processamento de dados eleitorais do TSE",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc"
@@ -61,20 +61,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tse.router, prefix="/api/v1", tags=["TSE"])
-
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    """Health check detalhado."""
-    return {
-        "status": "healthy",
-        "database": "connected",
-        "ckan_url": settings.CKAN_BASE_URL,
-        "app": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-    }
-
+app.include_router(tse.router, prefix="/api/v1", tags=["ETL - TSE"])
+app.include_router(votation.router, prefix="/api/v1", tags=["Apuração - TSE"])
+app.include_router(ckan.router, prefix="/api/v1", tags=["CKAN - TSE"])
 
 if __name__ == "__main__":
     import uvicorn

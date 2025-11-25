@@ -18,15 +18,9 @@ class VotationCandidateTransformer:
         'cd_municipio',
         'nm_municipio',
         'nr_zona',
-        'zona_eleitoral_id',
-        'endereco_zona',
-        'bairro_zona',
-        'cep_zona',
-        'telefone_zona',
         'ds_cargo',
         'nr_candidato',
         'nm_candidato',
-        'nm_social_candidato',
         'nr_partido',
         'sg_partido',
         'nm_partido',
@@ -46,6 +40,35 @@ class VotationCandidateTransformer:
         'qt_votos_nominais_validos': 'int',
         'dt_eleicao': 'date',
     }
+
+    @classmethod
+    def _is_valid_value(cls, v) -> bool:
+        """Verifica se valor é válido para inserção no banco."""
+
+        # Nulo
+        if v is None:
+            return False
+
+        # String vazia
+        if isinstance(v, str) and v.strip() == "":
+            return False
+
+        # Float NaN
+        if isinstance(v, float) and pd.isna(v):
+            return False
+
+        # NaT (Not a Time)
+        if hasattr(v, '__class__') and v.__class__.__name__ == 'NaTType':
+            return False
+
+        # Pandas NA (genérico)
+        try:
+            if pd.isna(v):
+                return False
+        except (TypeError, ValueError):
+            pass
+
+        return True
 
     def transform_dataframe_in_dict(self, df: pd.DataFrame) -> List[Dict]:
         """
@@ -76,6 +99,7 @@ class VotationCandidateTransformer:
 
             elif dtype == 'date':
                 df_filtered[col] = pd.to_datetime(df_filtered[col], errors='coerce')
+                df_filtered = df_filtered[df_filtered[col].notna()]
                 df_filtered[col] = df_filtered[col].dt.date
 
         df_filtered = df_filtered.dropna(how='all').drop_duplicates()
@@ -85,9 +109,7 @@ class VotationCandidateTransformer:
         for record in records:
             cleaned_record = {
                 k: v for k, v in record.items()
-                if v is not None
-                   and not (isinstance(v, str) and v.strip() == "")
-                   and not (isinstance(v, float) and pd.isna(v))
+                if self._is_valid_value(v)
             }
             cleaned_records.append(cleaned_record)
 
@@ -119,7 +141,7 @@ class VotationPartyTransformer:
         'QT_VOTOS_NOMINAIS_ANULADOS': 'qt_votos_nominais_anulados'
     }
 
-    def transform_dataframe(self, df: pd.DataFrame) -> List[Dict]:
+    def transform_dataframe_in_dict(self, df: pd.DataFrame) -> List[Dict]:
         """
         Transforma
         DataFrame

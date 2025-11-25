@@ -7,7 +7,7 @@ import pandas as pd
 from loguru import logger
 
 
-class VotacaoCandidatoExtractor:
+class VotationExtractor:
     """Extrator simplificado usando CDN direta do TSE."""
 
     CDN_TSE_BASE_URL = "https://cdn.tse.jus.br/estatistica/sead/odsele"
@@ -70,7 +70,6 @@ class VotacaoCandidatoExtractor:
                             f"Arquivos no ZIP: {z.namelist()}"
                         )
 
-                logger.info(f"📖 Lendo CSV: {expected_csv}")
                 with z.open(expected_csv) as f:
                     df = pd.read_csv(f, encoding=encoding, sep=sep, dtype=str, low_memory=False)
 
@@ -108,10 +107,8 @@ class VotacaoCandidatoExtractor:
 
         if uf:
             expected_csv = f"votacao_candidato_munzona_{year}_{uf.upper()}.csv"
-            logger.info(f"📥 Buscando CSV específico da UF: {expected_csv}")
         else:
             expected_csv = f"votacao_candidato_munzona_{year}_BRASIL.csv"
-            logger.info(f"📥 Buscando CSV nacional: {expected_csv}")
 
         try:
             async for df in self._download_and_extract_csv(

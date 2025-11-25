@@ -27,7 +27,6 @@ class CandidatesRepository:
             vote_records: Lista de dicionários com dados de votação
         """
         if not vote_records:
-            logger.warning("Lista de votos vazia, nenhum registro para inserir")
             return 0
 
         logger.info(f"Iniciando bulk insert de {len(vote_records)} registros")
@@ -66,7 +65,6 @@ class CandidatesRepository:
         try:
             stmt = insert(VotoCandidatoMunZona).values(vote_records)
 
-            # Para cada coluna da tabela, exceto as únicas, atualize com o valor do EXCLUDED
             update_cols = {
                 cast(Column, c).name: getattr(stmt.excluded, cast(Column, c).name)
                 for c in VotoCandidatoMunZona.__table__.columns

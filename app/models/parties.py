@@ -12,6 +12,7 @@ class VotoPartidoMunZona(Base):
     __tablename__ = "votacao_partido_munzona"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
     nr_turno = Column(Integer, nullable=False)
     ano_eleicao = Column(Integer, nullable=False)
     cd_eleicao = Column(Integer, nullable=False)
@@ -23,13 +24,6 @@ class VotoPartidoMunZona(Base):
     cd_municipio = Column(Integer, nullable=False)
     nm_municipio = Column(String(100), nullable=False)
     nr_zona = Column(Integer, nullable=False)
-
-    zona_eleitoral_id = Column(String(20), nullable=False)
-    endereco_zona = Column(String(200), nullable=True)
-    bairro_zona = Column(String(100), nullable=True)
-    cep_zona = Column(String(20), nullable=True)
-    telefone_zona = Column(String(50), nullable=True)
-
     cd_cargo = Column(Integer, nullable=False)
     ds_cargo = Column(String(50), nullable=False)
     nr_partido = Column(Integer, nullable=False)

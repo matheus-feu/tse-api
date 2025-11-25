@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Optional
 
@@ -20,27 +21,13 @@ class ETLLogRepository:
         """
         self.session = session
 
-    async def create_log(
-            self,
-            process_name: str,
-            package_id: Optional[str] = None,
-            resource_id: Optional[str] = None
-    ) -> ETLLog:
+    async def create_log(self, process_name: str) -> ETLLog:
         """
         Cria novo log de ETL com status INICIADO.
-
-        Args:
-            process_name: Nome do processo (ex: "etl_candidato_2024_SP")
-            package_id: ID do package CKAN (opcional)
-            resource_id: ID do resource CKAN (opcional)
-
-        Returns:
-            ETLLog criado
+        process_name: Nome do processo (ex: "etl_candidato_2024_SP")
         """
         log = ETLLog(
             process_name=process_name,
-            package_id=package_id,
-            resource_id=resource_id,
             status='INICIADO',
             start_time=datetime.utcnow()
         )
@@ -54,7 +41,7 @@ class ETLLogRepository:
 
     async def update_log_progress(
             self,
-            log_id: str,
+            log_id: uuid.UUID,
             status: str,
             records_processed: Optional[int] = None
     ) -> ETLLog:
@@ -88,7 +75,7 @@ class ETLLogRepository:
 
     async def finalize_log(
             self,
-            log_id: str,
+            log_id: uuid.UUID,
             status: str,
             records_processed: int,
             error_message: Optional[str] = None
@@ -97,7 +84,7 @@ class ETLLogRepository:
         Finaliza log (SUCESSO ou ERRO).
 
         Args:
-            log_id: ID do log
+            log_id: ID do log (UUID)
             status: Status final ("SUCESSO" ou "ERRO")
             records_processed: Total de registros processados
             error_message: Mensagem de erro (se houver)
@@ -130,15 +117,7 @@ class ETLLogRepository:
         return log
 
     async def find_by_id(self, log_id: str) -> Optional[ETLLog]:
-        """
-        Busca log por ID.
-
-        Args:
-            log_id: ID do log (UUID)
-
-        Returns:
-            ETLLog ou None se não encontrado
-        """
+        """ Busca log por ID."""
         stmt = select(ETLLog).where(ETLLog.id == log_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()

@@ -6,13 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
 from app.repository.log_repository import ETLLogRepository
-from app.schemas.etl_schema import ETLResponse, ETLRequest
+from app.schemas.etl_schemas import ETLResponse, ETLRequest, ETLLogResponse
 from app.services.etl.etl_orchestrator import ETLOrchestrator
 
 router = APIRouter()
 
 
-@router.get("/etl/logs/{log_id}")
+@router.get("/etl/logs/{log_id}", response_model=ETLLogResponse)
 async def get_status_job(log_id: str, db: AsyncSession = Depends(get_db_session)):
     """
     Consulta o status do job ETL pelo log_id retornado ao iniciar o processo ETL.
@@ -21,16 +21,12 @@ async def get_status_job(log_id: str, db: AsyncSession = Depends(get_db_session)
     log = await repo.find_by_id(log_id)
 
     if not log:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Job/log '{log_id}' não encontrado")
-    return {
-        "id": str(log.id),
-        "process_name": log.process_name,
-        "status": log.status,
-        "start_time": log.start_time.isoformat() if log.start_time else None,
-        "end_time": log.end_time.isoformat() if log.end_time else None,
-        "records_processed": log.records_processed,
-        "error_message": log.error_message
-    }
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Log '{log_id}' não encontrado"
+        )
+
+    return ETLLogResponse.from_orm(log)
 
 
 @router.post("/etl/execute", response_model=ETLResponse)
@@ -39,42 +35,46 @@ async def execute_etl(
         background_tasks: BackgroundTasks,
         db: AsyncSession = Depends(get_db_session)
 ):
-    """
-    Inicia o processo ETL para dados do TSE em segundo plano.
-    """
-    job_uuid = str(uuid.uuid4())
+    """Inicia ETL em background."""
 
-    try:
-        logger.info(f"🚀 Iniciando ETL: {request.tipo} - {request.ano}/{request.uf}")
-        orchestrator = ETLOrchestrator(db_session=db)
+    log_repo = ETLLogRepository(db)
+    process_name = f"etl_{request.tipo}_{request.ano}_{request.uf}"
+    log = await log_repo.create_log(process_name=process_name)
 
-        if request.tipo == "candidato":
-            background_tasks.add_task(
-                orchestrator.run_etl_votation_candidate,
-                ano=request.ano,
-                uf=request.uf,
-            )
-        elif request.tipo == "partido":
-            background_tasks.add_task(
-                orchestrator.run_etl_votacao_partido,
-                ano=request.ano,
-                uf=request.uf,
-            )
-        else:
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Tipo inválido. Use: 'candidato', 'partido' ou 'completo'")
+    async def run_etl_background_task(log_id: uuid.UUID):
+        """Wrapper para executar ETL e fazer cleanup."""
+        orchestrator = ETLOrchestrator(db_session=db, batch_size=1000)
+        try:
+            if request.tipo == "candidato":
+                log_id = await orchestrator.run_etl_votation_candidate(
+                    year=request.ano,
+                    uf=request.uf,
+                    log_id=log_id
+                )
+            elif request.tipo == "partido":
+                log_id = await orchestrator.run_etl_votation_partido(
+                    year=request.ano,
+                    uf=request.uf,
+                    log_id=log_id
+                )
+            else:
+                raise ValueError(f"Tipo inválido: {request.tipo}")
 
-        logger.info(f"✅ ETL iniciado em background: {job_uuid}")
+            logger.info(f"✅ ETL concluído: {log_id}")
+            return log_id
+        finally:
+            await orchestrator.extractor.close()
 
-        return ETLResponse(
-            status="INICIADO",
-            mensagem=f"ETL {request.tipo} iniciado para {request.ano}/{request.uf or 'TODAS'}",
-            log_id=job_uuid,
-            detalhes={
-                "ano": request.ano,
-                "uf": request.uf,
-                "tipo": request.tipo,
-            }
-        )
-    except Exception as e:
-        logger.error(f"❌ Erro ao iniciar ETL: {e}", exc_info=True)
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Erro ao iniciar ETL: {str(e)}")
+    background_tasks.add_task(run_etl_background_task, log.id)
+
+    return ETLResponse(
+        status="INICIADO",
+        mensagem=f"ETL {request.tipo} iniciado para {request.ano}/{request.uf or 'TODAS'}",
+        log_id=str(log.id),
+        detalhes={
+            "ano": request.ano,
+            "uf": request.uf,
+            "tipo": request.tipo,
+        }
+    )
+

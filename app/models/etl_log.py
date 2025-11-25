@@ -12,10 +12,8 @@ class ETLLog(Base):
     __tablename__ = "etl_log"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    process_name = Column(String(100), nullable=False)
-    package_id = Column(String(100))
-    resource_id = Column(String(100))
 
+    process_name = Column(String(100), nullable=False, index=True)
     status = Column(String(50), nullable=False)
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=True)
@@ -30,8 +28,6 @@ class ETLLog(Base):
         return {
             "id": str(self.id),
             "process_name": self.process_name,
-            "package_id": self.package_id,
-            "resource_id": self.resource_id,
             "status": self.status,
             "start_time": self.start_time.isoformat() if self.start_time else None,
             "end_time": self.end_time.isoformat() if self.end_time else None,
