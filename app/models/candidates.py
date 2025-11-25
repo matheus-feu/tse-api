@@ -13,8 +13,8 @@ class VotoCandidatoMunZona(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    nr_turno = Column(Integer, nullable=False)
     ano_eleicao = Column(Integer, nullable=False)
+    nr_turno = Column(Integer, nullable=False)
     cd_eleicao = Column(Integer, nullable=False)
     dt_eleicao = Column(Date, nullable=False)
     sg_uf = Column(String(2), nullable=False)
@@ -29,6 +29,7 @@ class VotoCandidatoMunZona(Base):
     nr_partido = Column(Integer, nullable=False)
     sg_partido = Column(String(20), nullable=False)
     nm_partido = Column(String(150), nullable=False)
+
     qt_votos_nominais = Column(Integer, nullable=False)
     qt_votos_nominais_validos = Column(Integer, nullable=False)
 

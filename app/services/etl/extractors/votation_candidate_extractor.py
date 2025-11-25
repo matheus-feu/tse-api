@@ -19,6 +19,41 @@ class VotationExtractor:
         """Fecha cliente HTTP."""
         await self.http_client.aclose()
 
+    async def extract_csv_from_tse(
+            self,
+            process_type: str,
+            year: int,
+            uf: Optional[str] = None
+    ) -> AsyncGenerator[pd.DataFrame, None]:
+        """
+        Extrai votação por candidato usando CDN direta do TSE.
+
+        Args:
+            process_type: Tipo de processo (ex: 'votacao_candidato_munzona' ou 'votacao_partido_munzona')
+            year: Ano da eleição (ex: 2024)
+            uf: Sigla da UF para filtrar (opcional)
+
+        Yields:
+            DataFrame com dados de votação
+        """
+        zip_url = f"{self.CDN_TSE_BASE_URL}/{process_type}/{process_type}_{year}.zip"
+        if uf:
+            expected_csv = f"{process_type}_{year}_{uf.upper()}.csv"
+        else:
+            expected_csv = f"{process_type}_{year}_BRASIL.csv"
+        logger.info(f"Baixando... url: {zip_url} | csv: {expected_csv}")
+
+        try:
+            async for df in self._download_and_extract_csv(
+                    url=zip_url,
+                    expected_csv=expected_csv
+            ):
+                logger.info(f"✅ CSV extraído: {len(df):,} registros")
+                yield df
+        except ValueError as e:
+            logger.error(f"❌ Erro na extração: {e}")
+            raise
+
     async def _download_and_extract_csv(
             self,
             url: str,
@@ -86,37 +121,4 @@ class VotationExtractor:
 
         except Exception as e:
             logger.error(f"❌ Erro ao processar ZIP: {e}", exc_info=True)
-            raise
-
-    async def extract_votation_year(
-            self,
-            year: int,
-            uf: Optional[str] = None
-    ) -> AsyncGenerator[pd.DataFrame, None]:
-        """
-        Extrai votação por candidato usando CDN direta do TSE.
-
-        Args:
-            year: Ano da eleição (ex: 2024)
-            uf: Sigla da UF para filtrar (opcional)
-
-        Yields:
-            DataFrame com dados de votação
-        """
-        zip_url = f"{self.CDN_TSE_BASE_URL}/votacao_candidato_munzona/votacao_candidato_munzona_{year}.zip"
-
-        if uf:
-            expected_csv = f"votacao_candidato_munzona_{year}_{uf.upper()}.csv"
-        else:
-            expected_csv = f"votacao_candidato_munzona_{year}_BRASIL.csv"
-
-        try:
-            async for df in self._download_and_extract_csv(
-                    url=zip_url,
-                    expected_csv=expected_csv
-            ):
-                logger.info(f"✅ CSV extraído: {len(df):,} registros")
-                yield df
-        except ValueError as e:
-            logger.error(f"❌ Erro na extração: {e}")
             raise

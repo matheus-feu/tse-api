@@ -65,7 +65,7 @@ class ETLOrchestrator:
             await self.log_repo.update_log_progress(log_id, 'PROCESSANDO', 0)
 
             # Extract & Transform & Load
-            async for df in extractor_method(year=year, uf=uf):
+            async for df in extractor_method(year=year, uf=uf, process_type=process_type):
                 # Transform
                 await self.log_repo.update_log_progress(log_id, 'TRANSFORMANDO')
                 records = transformer_method(df)
@@ -89,27 +89,27 @@ class ETLOrchestrator:
         finally:
             await self.extractor.close()
 
-    async def run_etl_votation_candidate(self, year: int, log_id: uuid.UUID, uf: Optional[str] = None, ) -> str:
+    async def run_etl_votation_candidate(self, year: int, process_type: str, log_id: uuid.UUID, uf: Optional[str] = None, ) -> str:
         """ETL de votação por candidato."""
         return await self._run_etl(
-            process_type='candidato',
             year=year,
             uf=uf,
             log_id=log_id,
-            extractor_method=self.extractor.extract_votation_year,
-            transformer_method=self.transformer_candidate.transform_dataframe_in_dict,
+            process_type=process_type,
+            extractor_method=self.extractor.extract_csv_from_tse,
+            transformer_method=self.transformer_candidate.transform,
             loader_method=self.loader.load_candidates
         )
 
-    async def run_etl_votation_partido(self, year: int, log_id: uuid.UUID, uf: Optional[str] = None) -> str:
+    async def run_etl_votation_partido(self, year: int, process_type: str, log_id: uuid.UUID, uf: Optional[str] = None) -> str:
         """ETL de votação por partido."""
         return await self._run_etl(
-            process_type='partido',
             year=year,
             uf=uf,
             log_id=log_id,
-            extractor_method=self.extractor.extract_votation_year,
-            transformer_method=self.transformer_partido.transform_dataframe_in_dict,
+            process_type=process_type,
+            extractor_method=self.extractor.extract_csv_from_tse,
+            transformer_method=self.transformer_partido.transform,
             loader_method=self.loader.load_parties
         )
 
