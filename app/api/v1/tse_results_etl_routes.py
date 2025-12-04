@@ -7,19 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db_session
 from app.repository.log_repository import ETLLogRepository
 from app.schemas.etl_schemas import ETLResponse, ETLRequest, ETLLogResponse
-from app.services.etl.etl_orchestrator import ETLOrchestrator
-from app.services.etl.etl_process_config import PROCESS_CONFIG
+from app.services.etl.config.etl_process_config import PROCESS_CONFIG
+from app.services.etl.orchestrators.etl_orchestrator import ETLOrchestrator
 
-router = APIRouter()
+router = APIRouter(prefix="/etl/tse/results")
 
 
-@router.get("/etl/logs/{log_id}", response_model=ETLLogResponse)
-async def get_status_job(log_id: str, db: AsyncSession = Depends(get_db_session)):
+@router.get("/logs/{log_id}", response_model=ETLLogResponse)
+async def get_status_job(log_id: uuid.UUID, db: AsyncSession = Depends(get_db_session)):
     """
     Consulta o status do job ETL pelo log_id retornado ao iniciar o processo ETL.
     """
     repo = ETLLogRepository(db)
-    log = await repo.find_by_id(log_id)
+    log = await repo.get(log_id)
 
     if not log:
         raise HTTPException(
@@ -30,7 +30,7 @@ async def get_status_job(log_id: str, db: AsyncSession = Depends(get_db_session)
     return ETLLogResponse.from_orm(log)
 
 
-@router.post("/etl/execute", response_model=ETLResponse)
+@router.post("/execute", response_model=ETLResponse)
 async def execute_etl(
         request: ETLRequest,
         background_tasks: BackgroundTasks,
@@ -39,7 +39,7 @@ async def execute_etl(
     """
     Inicia um processo ETL (Extract, Transform, Load) assíncrono, em background, para dados do TSE.
 
-    Este endpoint dispara a execução de um pipeline ETL para ingestão, transformação e carregamento dos dados eleitorais do TSE.
+    Este endpoint dispara a execução de um pipeline ETL para ingestão, transformação e carregamento dos resultados eleitorais do TSE.
     O tipo de dado processado depende do valor do campo `tipo` enviado na requisição (`candidato`, `partido`, etc).
 
     - Gera e persiste logs detalhados da execução.
@@ -63,7 +63,6 @@ async def execute_etl(
         "uf": "SP"
     }
     ```
-
     """
     log_repo = ETLLogRepository(db)
     process_name = f"etl_{request.tipo}_{request.ano}_{request.uf}"
@@ -93,7 +92,7 @@ async def execute_etl(
     background_tasks.add_task(run_etl_background_task, log.id)
 
     return ETLResponse(
-        status="INICIADO",
+        status="accepted",
         mensagem=f"ETL {request.tipo} iniciado para {request.ano}/{request.uf}",
         log_id=str(log.id),
         detalhes={

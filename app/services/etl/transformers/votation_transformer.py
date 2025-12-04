@@ -5,8 +5,8 @@ class VotationCandidateTransformer(BaseTransformer):
     """Transforma dados de votação por candidato."""
 
     COLUMN_MAPPING = [
-        'nr_turno',
         'ano_eleicao',
+        'nr_turno',
         'cd_eleicao',
         'dt_eleicao',
         'sg_uf',
@@ -53,6 +53,7 @@ class VotationPartyTransformer(BaseTransformer):
         'cd_municipio',
         'nm_municipio',
         'nr_zona',
+        'cd_cargo',
         'ds_cargo',
         'nr_partido',
         'sg_partido',
@@ -84,4 +85,7 @@ class VotationPartyTransformer(BaseTransformer):
         'qt_votos_legenda_anulados': 'int',
         'qt_votos_nominais_anulados': 'int',
         'dt_eleicao': 'date',
+        "sg_uf": "str_2",
+        "sg_ue": "str_10",
+        "sg_partido": "str_10",
     }

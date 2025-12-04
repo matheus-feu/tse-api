@@ -19,7 +19,6 @@ class CKANTSEClient:
         """
         try:
             packages = self.ckan.action.package_list()
-            logger.info(f"Total de pacotes encontrados: {len(packages)}")
             return packages
         except Exception as e:
             logger.error(f"Erro ao listar pacotes: {e}")
@@ -64,8 +63,6 @@ class CKANTSEClient:
         try:
             package = await self.get_package_details(package_id)
             resources = package.get('resources', [])
-
-            logger.info(f"✅ {len(resources)} resources no package '{package_id}'")
             return resources
 
         except Exception as e:
@@ -100,20 +97,19 @@ class CKANTSEClient:
         """
         try:
             resources = await self.get_package_resources(package_id)
-
             urls = []
             for resource in resources:
                 urls.append({
                     'name': resource.get('name', 'Sem nome'),
+                    'state': resource.get('state', ''),
                     'url': resource.get('url', ''),
                     'format': resource.get('format', 'unknown').upper(),
                     'created': resource.get('created', ''),
                     'description': resource.get('description', ''),
                     'resource_id': resource.get('id', ''),
+                    'package_id': resource.get('package_id', ''),
                     'mimetype': resource.get('mimetype', '')
                 })
-
-            logger.info(f"✅ {len(urls)} URLs extraídas do package '{package_id}'")
             return urls
 
         except Exception as e:

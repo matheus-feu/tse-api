@@ -23,12 +23,12 @@ class ETLLogRepository:
 
     async def create_log(self, process_name: str) -> ETLLog:
         """
-        Cria novo log de ETL com status INICIADO.
+        Cria novo log de ETL com status pending.
         process_name: Nome do processo (ex: "etl_candidato_2024_SP")
         """
         log = ETLLog(
             process_name=process_name,
-            status='INICIADO',
+            status='pending',
             start_time=datetime.utcnow()
         )
 
@@ -39,85 +39,53 @@ class ETLLogRepository:
         logger.info(f"📝 Log criado: {log.id} - {process_name}")
         return log
 
-    async def update_log_progress(
-            self,
-            log_id: uuid.UUID,
-            status: str,
-            records_processed: Optional[int] = None
-    ) -> ETLLog:
+    async def get(self, log_id: uuid.UUID) -> Optional[ETLLog]:
         """
-        Atualiza progresso do log (usado durante processamento).
-
+        Recupera um ETLLog pelo ID.
         Args:
             log_id: ID do log (UUID)
-            status: Novo status (ex: "EM_PROGRESSO", "EXTRAINDO", "TRANSFORMANDO")
-            records_processed: Número de registros processados até agora
-
-        Returns:
-            ETLLog atualizado
         """
-        stmt = select(ETLLog).where(ETLLog.id == log_id)
-        result = await self.session.execute(stmt)
-        log = result.scalar_one_or_none()
-
-        if not log:
-            raise ValueError(f"Log {log_id} não encontrado")
-
-        log.status = status
-        if records_processed is not None:
-            log.records_processed = records_processed
-
-        await self.session.commit()
-        await self.session.refresh(log)
-
-        logger.debug(f"📝 Log atualizado: {log.id} - Status: {status}")
-        return log
-
-    async def finalize_log(
-            self,
-            log_id: uuid.UUID,
-            status: str,
-            records_processed: int,
-            error_message: Optional[str] = None
-    ) -> ETLLog:
-        """
-        Finaliza log (SUCESSO ou ERRO).
-
-        Args:
-            log_id: ID do log (UUID)
-            status: Status final ("SUCESSO" ou "ERRO")
-            records_processed: Total de registros processados
-            error_message: Mensagem de erro (se houver)
-
-        Returns:
-            ETLLog finalizado
-        """
-        stmt = select(ETLLog).where(ETLLog.id == log_id)
-        result = await self.session.execute(stmt)
-        log = result.scalar_one_or_none()
-
-        if not log:
-            raise ValueError(f"Log {log_id} não encontrado")
-
-        log.status = status
-        log.end_time = datetime.utcnow()
-        log.records_processed = records_processed
-        if error_message:
-            log.error_message = error_message[:500]
-
-        await self.session.commit()
-        await self.session.refresh(log)
-
-        duration = (log.end_time - log.start_time).total_seconds()
-        logger.info(
-            f"📝 Log finalizado: {log.id} - Status: {status} - "
-            f"Registros: {records_processed} - Duração: {duration:.2f}s"
+        res = await self.session.execute(
+            select(ETLLog).where(ETLLog.id == log_id)
         )
+        return res.scalar_one_or_none()
 
-        return log
+    async def mark_pending(self, log_id: uuid.UUID) -> None:
+        """
+        Marca o log como pendente.
+        """
+        log = await self.get(log_id)
+        if log:
+            log.status = "pending"
+            await self.session.commit()
 
-    async def find_by_id(self, log_id: str) -> Optional[ETLLog]:
-        """ Busca log por ID."""
-        stmt = select(ETLLog).where(ETLLog.id == log_id)
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+    async def mark_processing(self, log_id: uuid.UUID) -> None:
+        """
+        Marca o log como em processamento.
+        """
+        log = await self.get(log_id)
+        if log:
+            log.status = "processing"
+            await self.session.commit()
+
+    async def mark_done(self, log_id: uuid.UUID, records_processed: int) -> None:
+        """
+        Marca o log como concluído.
+        """
+        log = await self.get(log_id)
+        if log:
+            log.status = "done"
+            log.end_time = datetime.utcnow()
+            log.records_processed = records_processed
+            await self.session.commit()
+
+    async def mark_error(self, log_id: uuid.UUID, error_message: str) -> None:
+        """
+        Marca o log como erro.
+        """
+        log = await self.get(log_id)
+        if log:
+            log.status = "error"
+            log.end_time = datetime.utcnow()
+            log.error_message = error_message
+            await self.session.commit()

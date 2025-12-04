@@ -40,6 +40,8 @@ class BaseTransformer(ABC):
 
         for col, dtype in self.TYPE_MAPPING.items():
             if col not in df_filtered.columns:
+                if dtype == 'int':
+                    df_filtered[col] = 0
                 continue
 
             if dtype == 'int':
@@ -49,6 +51,14 @@ class BaseTransformer(ABC):
                 df_filtered[col] = pd.to_datetime(df_filtered[col], errors='coerce')
                 df_filtered = df_filtered[df_filtered[col].notna()]
                 df_filtered[col] = df_filtered[col].dt.date
+            elif isinstance(dtype, str) and dtype.startswith("str_"):
+                max_len = int(dtype.split("_", 1)[1])
+                df_filtered[col] = (
+                    df_filtered[col]
+                    .astype(str)
+                    .str.strip()
+                    .str.slice(0, max_len)
+                )
 
         df_filtered = df_filtered.dropna(how='all').drop_duplicates()
         records = df_filtered.to_dict(orient='records')

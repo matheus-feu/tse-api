@@ -7,10 +7,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
-from app.filters.votation_filters import VotationCandidateFilter
+from app.filters.votation_filters import VotationCandidateFilter, VotationPartyFilter
 from app.models.candidates import VotoCandidatoMunZona
+from app.models.parties import VotoPartidoMunZona
+from app.repository.parties_repository import PartiesRepository
 from app.repository.votation_repository import VotationRepository
-from app.schemas.votation_schemas import VotationPaginatedResponse, VotationCandidateResponse
+from app.schemas.votation_schemas import VotationPaginatedResponse, VotationCandidateResponse, \
+    VotationPartyPaginatedResponse, VotationPartyResponse
 
 router = APIRouter(prefix="/votation")
 
@@ -49,7 +52,7 @@ async def list_votation_candidates(
             offset=offset
         )
         logger.info(f"✅ Query executada - {len(results)} resultados, total={total}")
-        
+
         return VotationPaginatedResponse(
             total=total,
             limit=limit,
@@ -85,3 +88,72 @@ async def get_details_candidate(
     except Exception as e:
         logger.error(f"Erro ao buscar detalhes do candidato: {str(e)}")
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Erro ao buscar detalhes: {str(e)}")
+
+
+@router.get("/parties", response_model=VotationPartyPaginatedResponse)
+async def list_votation_parties(
+        votation_filter: VotationPartyFilter = FilterDepends(VotationPartyFilter),
+        limit: int = Query(100, ge=1, le=1000, description="Limite de registros"),
+        offset: int = Query(0, ge=0, description="Offset para paginação"),
+        db: AsyncSession = Depends(get_db_session),
+):
+    """
+    Lista votação por partido com filtros automáticos.
+
+    Exemplos de filtros esperados no VotationPartyFilter:
+    - ano_eleicao, sg_uf, cd_municipio, nr_zona
+    - nr_partido, sg_partido
+    - ds_cargo__ilike, nm_municipio__ilike
+    - qt_total_votos_leg_validos__gte / __lte
+    - order_by, search
+    """
+    try:
+        logger.info(f"📥 Recebendo requisição de partidos com filtros: {votation_filter}")
+
+        repo = PartiesRepository(db)
+        results, total = await repo.find_with_filters(
+            filter_model=votation_filter,
+            limit=limit,
+            offset=offset,
+        )
+        logger.info(f"✅ Query partidos executada - {len(results)} resultados, total={total}")
+
+        return VotationPartyPaginatedResponse(
+            total=total,
+            limit=limit,
+            offset=offset,
+            data=[VotationPartyResponse.model_validate(r) for r in results],
+        )
+    except Exception as e:
+        logger.error(f"❌ Erro no endpoint de partidos: {e}", exc_info=True)
+        raise HTTPException(500, f"Erro ao buscar votação por partido: {str(e)}")
+
+
+@router.get("/parties/{party_vote_id}", response_model=VotationPartyResponse)
+async def get_details_party_vote(
+        party_vote_id: UUID,
+        db: AsyncSession = Depends(get_db_session),
+):
+    """Retorna detalhes de um registro específico de votação por partido (município/zona)."""
+    try:
+        logger.info(f"🔍 Buscando votação por partido ID: {party_vote_id}")
+
+        result = await db.execute(
+            select(VotoPartidoMunZona).where(VotoPartidoMunZona.id == party_vote_id)
+        )
+        party_vote = result.scalar_one_or_none()
+        if not party_vote:
+            logger.warning(f"Registro de votação por partido não encontrado: {party_vote_id}")
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                "Registro de votação por partido não encontrado",
+            )
+
+        return VotationPartyResponse.from_orm(party_vote)
+
+    except Exception as e:
+        logger.error(f"Erro ao buscar detalhes de votação por partido: {str(e)}")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            f"Erro ao buscar detalhes de votação por partido: {str(e)}",
+        )

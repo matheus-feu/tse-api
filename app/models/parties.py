@@ -42,9 +42,14 @@ class VotoPartidoMunZona(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            'ano_eleicao', 'nr_turno', 'sg_uf',
-            'cd_municipio', 'nr_zona', 'nr_partido',
-            name='uq_votacao_partido'
+            'ano_eleicao',
+            'sg_uf',
+            'cd_municipio',
+            'nr_zona',
+            'nr_turno',
+            'nr_partido',
+            'cd_cargo',
+            name='uq_votacao_partido',
         ),
     )
 

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from alembic import command
-from app.api.v1 import tse, votation, ckan
+from app.api.v1 import tse_results_etl_routes, votation_routes, ckan_routes, tse_packages_routes
 from app.core.config import settings
 from app.core.database import init_db, create_database_if_not_exists
 
@@ -50,7 +50,8 @@ app = FastAPI(
     description="API para extração e processamento de dados eleitorais do TSE",
     lifespan=lifespan,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    root_path="/api/v1"
 )
 
 app.add_middleware(
@@ -61,9 +62,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tse.router, prefix="/api/v1", tags=["ETL - TSE"])
-app.include_router(votation.router, prefix="/api/v1", tags=["Apuração - TSE"])
-app.include_router(ckan.router, prefix="/api/v1", tags=["CKAN - TSE"])
+app.include_router(tse_results_etl_routes.router, prefix="/api/v1", tags=["ETL Candidato/Partido - TSE"])
+app.include_router(votation_routes.router, prefix="/api/v1", tags=["Apuração - TSE"])
+app.include_router(tse_packages_routes.router, prefix="/api/v1", tags=["ETL Packages - TSE"])
+app.include_router(ckan_routes.router, prefix="/api/v1", tags=["CKAN - TSE"])
 
 if __name__ == "__main__":
     import uvicorn

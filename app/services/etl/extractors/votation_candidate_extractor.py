@@ -6,18 +6,16 @@ import httpx
 import pandas as pd
 from loguru import logger
 
+from app.utils.http_client import HttpClient
 
-class VotationExtractor:
+
+class VotationExtractor(HttpClient):
     """Extrator simplificado usando CDN direta do TSE."""
 
     CDN_TSE_BASE_URL = "https://cdn.tse.jus.br/estatistica/sead/odsele"
 
-    def __init__(self):
-        self.http_client = httpx.AsyncClient(timeout=300.0)
-
-    async def close(self):
-        """Fecha cliente HTTP."""
-        await self.http_client.aclose()
+    def __init__(self, timeout: float = 60.0):
+        super().__init__(timeout=timeout)
 
     async def extract_csv_from_tse(
             self,
@@ -80,7 +78,7 @@ class VotationExtractor:
         logger.info(f"Baixando arquivo de {url}")
 
         try:
-            async with self.http_client.stream("GET", url) as response:
+            async with await self.stream("GET", url) as response:
                 response.raise_for_status()
                 content = await response.aread()
 

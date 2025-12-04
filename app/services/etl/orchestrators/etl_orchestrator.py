@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repository.log_repository import ETLLogRepository
 from app.services.etl.extractors.votation_candidate_extractor import VotationExtractor
-from app.services.etl.loaders.votation_loader import VotationLoader
+from app.services.etl.loaders.candidates_loader import CandidatesLoader
+from app.services.etl.loaders.parties_loader import PartiesLoader
 from app.services.etl.transformers.votation_transformer import (
     VotationPartyTransformer,
     VotationCandidateTransformer
@@ -27,8 +28,11 @@ class ETLOrchestrator:
         self.extractor = VotationExtractor()
         self.transformer_candidate = VotationCandidateTransformer()
         self.transformer_partido = VotationPartyTransformer()
-        self.loader = VotationLoader(db_session)
+
+        self.candidate_loader = CandidatesLoader(db_session)
+        self.parties_loader = PartiesLoader(db_session)
         self.log_repo = ETLLogRepository(db_session)
+
         self.batch_size = batch_size
 
     async def _process_chunks(self, records: List[Dict], loader_method) -> int:
@@ -62,34 +66,41 @@ class ETLOrchestrator:
 
         try:
             logger.info(f"🚀 ETL iniciado: {process_name} [Log ID: {log_id}]")
-            await self.log_repo.update_log_progress(log_id, 'PROCESSANDO', 0)
+            await self.log_repo.mark_processing(log_id)
 
             # Extract & Transform & Load
             async for df in extractor_method(year=year, uf=uf, process_type=process_type):
                 # Transform
-                await self.log_repo.update_log_progress(log_id, 'TRANSFORMANDO')
+                await self.log_repo.mark_pending(log_id)
                 records = transformer_method(df)
 
                 # Load
-                await self.log_repo.update_log_progress(log_id, 'CARREGANDO')
+                await self.log_repo.mark_pending(log_id)
                 loaded = await self._process_chunks(records, loader_method)
                 total_loaded += loaded
 
                 logger.info(f"💾 {loaded:,} salvos (total: {total_loaded:,})")
+                await self.extractor.close()
 
-            await self.log_repo.finalize_log(log_id, 'SUCESSO', total_loaded, None)
+            await self.log_repo.mark_done(log_id, total_loaded)
             logger.info(f"✅ {process_name} concluído: {total_loaded:,} registros")
             return str(log_id)
 
         except Exception as e:
-            await self.log_repo.finalize_log(log_id, 'ERRO', total_loaded, str(e)[:500])
+            await self.log_repo.mark_error(log_id, str(e))
             logger.error(f"❌ Erro em {process_name}: {e}", exc_info=True)
             raise
 
         finally:
             await self.extractor.close()
 
-    async def run_etl_votation_candidate(self, year: int, process_type: str, log_id: uuid.UUID, uf: Optional[str] = None, ) -> str:
+    async def run_etl_votation_candidate(
+            self,
+            year: int,
+            process_type: str,
+            log_id: uuid.UUID,
+            uf: Optional[str] = None
+    ) -> str:
         """ETL de votação por candidato."""
         return await self._run_etl(
             year=year,
@@ -98,10 +109,16 @@ class ETLOrchestrator:
             process_type=process_type,
             extractor_method=self.extractor.extract_csv_from_tse,
             transformer_method=self.transformer_candidate.transform,
-            loader_method=self.loader.load_candidates
+            loader_method=self.candidate_loader.load_candidates
         )
 
-    async def run_etl_votation_partido(self, year: int, process_type: str, log_id: uuid.UUID, uf: Optional[str] = None) -> str:
+    async def run_etl_votation_partido(
+            self,
+            year: int,
+            process_type: str,
+            log_id: uuid.UUID,
+            uf: Optional[str] = None
+    ) -> str:
         """ETL de votação por partido."""
         return await self._run_etl(
             year=year,
@@ -110,7 +127,7 @@ class ETLOrchestrator:
             process_type=process_type,
             extractor_method=self.extractor.extract_csv_from_tse,
             transformer_method=self.transformer_partido.transform,
-            loader_method=self.loader.load_parties
+            loader_method=self.parties_loader.load_parties
         )
 
     async def __aenter__(self):
