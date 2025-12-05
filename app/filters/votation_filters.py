@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi_filter.contrib.sqlalchemy import Filter
 from pydantic import Field
 
-from app.models.candidates import VotoCandidatoMunZona
+from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZona
 
 
 class VotationCandidateFilter(Filter):
@@ -31,7 +31,7 @@ class VotationCandidateFilter(Filter):
     )
 
     class Constants(Filter.Constants):
-        model = VotoCandidatoMunZona
+        model = VotacaoCandidatoMunZona
 
         ordering_field_name = "order_by"
         ordering_fields = [
@@ -68,7 +68,7 @@ class VotationPartyFilter(Filter):
     )
 
     class Constants(Filter.Constants):
-        model = VotoCandidatoMunZona
+        model = VotacaoCandidatoMunZona
 
         ordering_field_name = "order_by"
         ordering_fields = [

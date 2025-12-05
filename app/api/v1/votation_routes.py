@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
 from app.filters.votation_filters import VotationCandidateFilter, VotationPartyFilter
-from app.models.candidates import VotoCandidatoMunZona
-from app.models.parties import VotoPartidoMunZona
+from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZona
+from app.models.resultados.votacao_partido_munzona import VotacaoPartidoMunZona
 from app.repository.parties_repository import PartiesRepository
 from app.repository.votation_repository import VotationRepository
 from app.schemas.votation_schemas import VotationPaginatedResponse, VotationCandidateResponse, \
@@ -74,8 +74,8 @@ async def get_details_candidate(
         logger.info(f"🔍 Buscando candidato ID: {candidate_id}")
 
         result = await db.execute(
-            select(VotoCandidatoMunZona).where(
-                VotoCandidatoMunZona.id == candidate_id
+            select(VotacaoCandidatoMunZona).where(
+                VotacaoCandidatoMunZona.id == candidate_id
             )
         )
         candidate = result.scalar_one_or_none()
@@ -139,7 +139,7 @@ async def get_details_party_vote(
         logger.info(f"🔍 Buscando votação por partido ID: {party_vote_id}")
 
         result = await db.execute(
-            select(VotoPartidoMunZona).where(VotoPartidoMunZona.id == party_vote_id)
+            select(VotacaoPartidoMunZona).where(VotacaoPartidoMunZona.id == party_vote_id)
         )
         party_vote = result.scalar_one_or_none()
         if not party_vote:

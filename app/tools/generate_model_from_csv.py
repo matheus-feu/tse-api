@@ -128,34 +128,36 @@ def generate_from_csv(
 if __name__ == "__main__":
     import argparse
 
-    """
-     python app/tools/generate_model_from_csv.py /home/havokz/Downloads/perfil_comparecimento_abstencao_2024/perfil_comparecimento_abstencao_2024_BRASIL.csv perfil_comparecimento_abstencao --output-models-dir app/models
-    """
-
     parser = argparse.ArgumentParser(
-        description="Gera SQL de criação de tabela e modelo SQLAlchemy a partir de um CSV."
+        description="Gera SQL e modelo SQLAlchemy a partir de um CSV."
+    )
+    parser.add_argument("csv_path", nargs="?", help="Caminho para o arquivo CSV")
+    parser.add_argument("table_name", nargs="?", help="Nome da tabela a ser criada")
+    parser.add_argument(
+        "--sep", type=str, default=";", help="Separador do CSV (padrão: ';')"
+    )
+    parser.add_argument(
+        "--encoding", type=str, default="latin1", help="Codificação do CSV"
     )
     parser.add_argument(
         "--output-models-dir",
         type=str,
         default=None,
-        help="Se informado, salva o modelo em um arquivo .py dentro deste diretório (ex: app/models)",
+        help="Diretório para salvar o modelo (ex: app/models)",
     )
-    parser.add_argument("csv_path", type=str, help="Caminho para o arquivo CSV")
-    parser.add_argument("table_name", type=str, help="Nome da tabela a ser criada")
-    parser.add_argument(
-        "--sep",
-        type=str,
-        default=";",
-        help="Separador do CSV (padrão: ';')",
-    )
-    parser.add_argument(
-        "--encoding",
-        type=str,
-        default="latin1",
-        help="Codificação do CSV (padrão: 'latin1')",
-    )
+
     args = parser.parse_args()
+
+    # Se faltou csv_path ou table_name, pergunta no terminal
+    if not args.csv_path:
+        args.csv_path = input("Informe o caminho do CSV: ").strip()
+
+    if not args.table_name:
+        args.table_name = input("Informe o nome da tabela: ").strip()
+
+    if not args.output_models_dir:
+        out = input("Diretório para salvar o modelo (ENTER para não salvar): ").strip()
+        args.output_models_dir = out or None
 
     create_sql, model_code, model_name = generate_from_csv(
         csv_path=args.csv_path,

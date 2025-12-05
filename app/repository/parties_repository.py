@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.bulk_upsert import bulk_upsert
-from app.models.parties import VotoPartidoMunZona
+from app.models.resultados.votacao_partido_munzona import VotacaoPartidoMunZona
 
 
 class PartiesRepository:
@@ -32,7 +32,7 @@ class PartiesRepository:
         ]
         return await bulk_upsert(
             self.db_session,
-            VotoPartidoMunZona,
+            VotacaoPartidoMunZona,
             vote_records,
             unique_fields,
             skip_update=['id']
@@ -43,7 +43,7 @@ class PartiesRepository:
             filter_model,
             limit: int = 100,
             offset: int = 0,
-    ) -> Tuple[Sequence[VotoPartidoMunZona], int]:
+    ) -> Tuple[Sequence[VotacaoPartidoMunZona], int]:
         """
         Aplica VotationPartyFilter e retorna (results, total).
         """
@@ -55,7 +55,7 @@ class PartiesRepository:
                 offset,
             )
 
-            base_query = select(VotoPartidoMunZona)
+            base_query = select(VotacaoPartidoMunZona)
             filtered_query = filter_model.filter(base_query)
 
             count_query = select(func.count()).select_from(filtered_query.subquery())

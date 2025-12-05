@@ -5,7 +5,7 @@ from loguru import logger
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.candidates import VotoCandidatoMunZona
+from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZona
 
 
 class VotationRepository:
@@ -19,7 +19,7 @@ class VotationRepository:
             filter_model: Filter,
             limit: int = 100,
             offset: int = 0
-    ) -> tuple[Sequence[VotoCandidatoMunZona], int]:
+    ) -> tuple[Sequence[VotacaoCandidatoMunZona], int]:
         """
         Busca votação com filtros usando fastapi-filter.
 
@@ -32,12 +32,12 @@ class VotationRepository:
             Tupla (resultados, total)
         """
         try:
-            query = select(VotoCandidatoMunZona)
+            query = select(VotacaoCandidatoMunZona)
             query = filter_model.filter(query)
             query = filter_model.sort(query)
             query = query.limit(limit).offset(offset)
 
-            count_query = select(func.count()).select_from(VotoCandidatoMunZona)
+            count_query = select(func.count()).select_from(VotacaoCandidatoMunZona)
             count_query = filter_model.filter(count_query)
 
             import asyncio

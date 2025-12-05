@@ -4,10 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="update .gitignore and requirements.txt; add ckanapi and fastapi-filters dependencies">
+      <change afterPath="$PROJECT_DIR$/.idea/api-tse.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/candidatos/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/comparecimento_abstencao/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/eleitorado/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/prestacao_contas/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/votation_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/votation_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/filters/votation_filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/filters/votation_filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/candidates.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/resultados/votacao_candidato_munzona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/parties.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/resultados/votacao_partido_munzona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/perfil_comparecimento_abstencao.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/comparecimento_abstencao/perfil_comparecimento_abstencao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/candidates_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/candidates_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/parties_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/parties_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/votation_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/votation_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/tools/generate_model_from_csv.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/tools/generate_model_from_csv.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,61 +65,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "FastAPI.ckan-tse-api .executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.generate_model_from_csv.executor": "Run",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "vcs.Git"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;FastAPI.ckan-tse-api .executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.generate_model_from_csv.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/havokz/PycharmProjects/api-tse/app/models/eleitorado&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/models/eleitorado" />
+      <recent name="$PROJECT_DIR$/app/models/prestacao_contas" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/models/comparecimento_abstencao" />
+      <recent name="$PROJECT_DIR$/app/models/candidatos" />
+      <recent name="$PROJECT_DIR$/app/models/resultados" />
       <recent name="$PROJECT_DIR$/app/services/etl/config" />
       <recent name="$PROJECT_DIR$/app/services/etl/orchestrators" />
-      <recent name="$PROJECT_DIR$/app/services/etl" />
-      <recent name="$PROJECT_DIR$/app/db" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="api-tse" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="ckan-tse-api " type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/main.py" />
       <module name="api-tse" />
@@ -116,67 +117,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="launchJavascriptDebuger" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Python.FlaskServer">
-      <module name="api-tse" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="api-tse" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Docutils task">
-      <module name="api-tse" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Sphinx task">
-      <module name="api-tse" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
       <method v="2" />
     </configuration>
   </component>
@@ -212,6 +152,7 @@
       <workItem from="1764248203806" duration="2300000" />
       <workItem from="1764788065189" duration="8216000" />
       <workItem from="1764857637801" duration="19664000" />
+      <workItem from="1764937263042" duration="10223000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure with core files and configurations">
       <option name="closed" value="true" />
@@ -245,7 +186,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764080285556</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update .gitignore and requirements.txt; add ckanapi and fastapi-filters dependencies">
+      <option name="closed" value="true" />
+      <created>1764897342569</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1764897342569</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -257,7 +206,8 @@
     <MESSAGE value="add ETL orchestration, logging, and database configuration" />
     <MESSAGE value="refactor ETL process: streamline logging, enhance error handling, and improve data extraction for voting candidates and parties" />
     <MESSAGE value="add ETL process configuration and implement bulk upsert functionality for candidates and parties" />
-    <option name="LAST_COMMIT_MESSAGE" value="add ETL process configuration and implement bulk upsert functionality for candidates and parties" />
+    <MESSAGE value="update .gitignore and requirements.txt; add ckanapi and fastapi-filters dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="update .gitignore and requirements.txt; add ckanapi and fastapi-filters dependencies" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -279,7 +229,7 @@
     <SUITE FILE_PATH="coverage/ckan_tse_api_$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1764876191353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$main.coverage" NAME="main Coverage Results" MODIFIED="1763489755204" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$generate_model_from_csv.coverage" NAME="generate_model_from_csv Coverage Results" MODIFIED="1764871624170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/tools" />
-    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1764897214003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1764950059948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
