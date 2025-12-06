@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from alembic import command
-from app.api.v1 import tse_results_etl_routes, votation_routes, ckan_routes, tse_packages_routes
+from app.api.v1.ckan import ckan_routes
+from app.api.v1.resultados import candidates_routes
 from app.core.config import settings
 from app.core.database import init_db, create_database_if_not_exists
 
@@ -62,9 +63,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tse_results_etl_routes.router, prefix="/api/v1", tags=["ETL Candidato/Partido - TSE"])
-app.include_router(votation_routes.router, prefix="/api/v1", tags=["Apuração - TSE"])
-app.include_router(tse_packages_routes.router, prefix="/api/v1", tags=["ETL Packages - TSE"])
+app.include_router(candidates_routes.router, prefix="/api/v1", tags=["Apuração - TSE"])
 app.include_router(ckan_routes.router, prefix="/api/v1", tags=["CKAN - TSE"])
 
 if __name__ == "__main__":

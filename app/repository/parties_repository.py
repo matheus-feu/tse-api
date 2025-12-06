@@ -1,10 +1,9 @@
-from typing import List, Dict, Tuple, Sequence
+from typing import Tuple, Sequence
 
 from loguru import logger
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.bulk_upsert import bulk_upsert
 from app.models.resultados.votacao_partido_munzona import VotacaoPartidoMunZona
 
 
@@ -16,27 +15,6 @@ class PartiesRepository:
         Inicializa o repository.
         """
         self.db_session = db_session
-
-    async def bulk_upsert_votes(self, vote_records: List[Dict]) -> int:
-        """
-        Realiza um upsert em massa dos registros de votação por partido.
-        """
-        unique_fields = [
-            "ano_eleicao",
-            "sg_uf",
-            "cd_municipio",
-            "nr_zona",
-            "nr_turno",
-            "nr_partido",
-            "cd_cargo",
-        ]
-        return await bulk_upsert(
-            self.db_session,
-            VotacaoPartidoMunZona,
-            vote_records,
-            unique_fields,
-            skip_update=['id']
-        )
 
     async def find_with_filters(
             self,

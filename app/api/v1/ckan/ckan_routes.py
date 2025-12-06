@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Path, status
 from loguru import logger
 
-from app.services.ckan.ckan_client import CKANTSEClient
+from app.services.ckan_client import CKANTSEClient
 
 router = APIRouter(prefix="/ckan")
 

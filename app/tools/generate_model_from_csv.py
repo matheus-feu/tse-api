@@ -46,9 +46,18 @@ def infer_pg_type(series: pd.Series) -> tuple[str, int | None]:
         return "TEXT", None
 
     if pd.api.types.is_integer_dtype(s):
-        return "INTEGER", None
+        max_val = s.max()
+        min_val = s.min()
+        if min_val >= -32768 and max_val <= 32767:
+            return "SMALLINT", None
+        elif min_val >= -2147483648 and max_val <= 2147483647:
+            return "INTEGER", None
+        else:
+            return "BIGINT", None
+
     if pd.api.types.is_float_dtype(s):
-        return "FLOAT", None
+        return "DOUBLE PRECISION", None
+
     if pd.api.types.is_bool_dtype(s):
         return "BOOLEAN", None
 
@@ -89,11 +98,15 @@ def generate_from_csv(
 
     # Model SQLAlchemy
     type_map = {
+        "SMALLINT": "SmallInteger",
         "INTEGER": "Integer",
+        "BIGINT": "BigInteger",
         "NUMERIC": "Numeric",
         "TEXT": "Text",
         "TIMESTAMP": "DateTime(timezone=True)",
+        "DOUBLE PRECISION": "Float",
         "VARCHAR": "String",
+        "BOOLEAN": "Boolean",
     }
 
     model_name = "".join(part.capitalize() for part in table_name.split("_"))
@@ -101,7 +114,10 @@ def generate_from_csv(
     lines = []
     lines.append("import uuid")
     lines.append("")
-    lines.append("from sqlalchemy import Column, Integer, Numeric, Text, DateTime, Boolean, String")
+    lines.append(
+        "from sqlalchemy import Column, SmallInteger, Integer, BigInteger, Numeric, "
+        "Text, DateTime, Boolean, String, Float"
+    )
     lines.append("from sqlalchemy.dialects.postgresql import UUID")
     lines.append("from app.core.database import Base")
     lines.append("")

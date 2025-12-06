@@ -12,8 +12,12 @@ from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZ
 from app.models.resultados.votacao_partido_munzona import VotacaoPartidoMunZona
 from app.repository.parties_repository import PartiesRepository
 from app.repository.votation_repository import VotationRepository
-from app.schemas.votation_schemas import VotationPaginatedResponse, VotationCandidateResponse, \
-    VotationPartyPaginatedResponse, VotationPartyResponse
+from app.schemas.votation_schemas import (
+    VotationPaginatedResponse,
+    VotationCandidateResponse,
+    VotationPartyPaginatedResponse,
+    VotationPartyResponse
+)
 
 router = APIRouter(prefix="/votation")
 
