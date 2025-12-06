@@ -1,8 +1,8 @@
-from datetime import date
+from datetime import datetime, date
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, field_validator, FieldValidationInfo, ConfigDict
 
 
 class VotationCandidateResponse(BaseModel):
@@ -25,6 +25,13 @@ class VotationCandidateResponse(BaseModel):
     qt_votos_nominais_validos: int
 
     model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("dt_eleicao", mode="before")
+    @classmethod
+    def parse_br_date(cls, v: str, info: FieldValidationInfo) -> date:
+        if isinstance(v, date):
+            return v
+        return datetime.strptime(v, "%d/%m/%Y").date()
 
 
 class VotationPaginatedResponse(BaseModel):
