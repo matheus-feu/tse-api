@@ -35797,7 +35797,7 @@ unpackaged</AvailableUpdates>
     <table id="6249" parent="785" name="votacao_partido_munzona">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>24579</ObjectId>
-      <StateNumber>2734</StateNumber>
+      <StateNumber>2761</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>root</OwnerName>
     </table>
@@ -78788,9 +78788,9 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18935" parent="6249" name="sq_coligacao">
       <Position>28</Position>
-      <StateNumber>2734</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>2749</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18936" parent="6249" name="nm_coligacao">
       <Position>29</Position>
@@ -78800,8 +78800,8 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18937" parent="6249" name="ds_composicao_coligacao">
       <Position>30</Position>
-      <StateNumber>2734</StateNumber>
-      <StoredType>varchar(185)|0s</StoredType>
+      <StateNumber>2768</StateNumber>
+      <StoredType>varchar(300)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18938" parent="6249" name="st_voto_em_transito">
@@ -78863,7 +78863,7 @@ unpackaged</AvailableUpdates>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24584</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>2734</StateNumber>
+      <StateNumber>2761</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>

@@ -13,16 +13,16 @@ from app.models.resultados.votacao_partido_munzona import VotacaoPartidoMunZona
 from app.repository.parties_repository import PartiesRepository
 from app.repository.votation_repository import VotationRepository
 from app.schemas.votation_schemas import (
-    VotationPaginatedResponse,
-    VotationCandidateResponse,
-    VotationPartyPaginatedResponse,
-    VotationPartyResponse
+    VotacaoCandidatoMunZonaPaginatedResponse,
+    VotacaoCandidatoMunZonaResponse,
+    VotacaoPartidoMunZonaPaginatedResponse,
+    VotacaoPartidoMunZonaResponse,
 )
 
 router = APIRouter(prefix="/votation")
 
 
-@router.get("/candidates", response_model=VotationPaginatedResponse)
+@router.get("/candidates", response_model=VotacaoCandidatoMunZonaPaginatedResponse)
 async def list_votation_candidates(
         votation_filter: VotationCandidateFilter = FilterDepends(VotationCandidateFilter),
         limit: int = Query(100, ge=1, le=1000, description="Limite de registros"),
@@ -57,18 +57,18 @@ async def list_votation_candidates(
         )
         logger.info(f"✅ Query executada - {len(results)} resultados, total={total}")
 
-        return VotationPaginatedResponse(
+        return VotacaoCandidatoMunZonaPaginatedResponse(
             total=total,
             limit=limit,
             offset=offset,
-            data=[VotationCandidateResponse.model_validate(r) for r in results]
+            data=[VotacaoCandidatoMunZonaResponse.model_validate(r) for r in results]
         )
     except Exception as e:
         logger.error(f"❌ Erro no endpoint: {e}", exc_info=True)
         raise HTTPException(500, f"Erro ao buscar votação: {str(e)}")
 
 
-@router.get("/candidates/{candidate_id}", response_model=VotationCandidateResponse)
+@router.get("/candidates/{candidate_id}", response_model=VotacaoCandidatoMunZonaResponse)
 async def get_details_candidate(
         candidate_id: UUID,
         db: AsyncSession = Depends(get_db_session)
@@ -87,14 +87,14 @@ async def get_details_candidate(
             logger.warning(f"Registro de votação não encontrado: {candidate_id}")
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Registro não encontrado")
 
-        return VotationCandidateResponse.from_orm(candidate)
+        return VotacaoCandidatoMunZonaResponse.from_orm(candidate)
 
     except Exception as e:
         logger.error(f"Erro ao buscar detalhes do candidato: {str(e)}")
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Erro ao buscar detalhes: {str(e)}")
 
 
-@router.get("/parties", response_model=VotationPartyPaginatedResponse)
+@router.get("/parties", response_model=VotacaoPartidoMunZonaPaginatedResponse)
 async def list_votation_parties(
         votation_filter: VotationPartyFilter = FilterDepends(VotationPartyFilter),
         limit: int = Query(100, ge=1, le=1000, description="Limite de registros"),
@@ -122,18 +122,18 @@ async def list_votation_parties(
         )
         logger.info(f"✅ Query partidos executada - {len(results)} resultados, total={total}")
 
-        return VotationPartyPaginatedResponse(
+        return VotacaoPartidoMunZonaPaginatedResponse(
             total=total,
             limit=limit,
             offset=offset,
-            data=[VotationPartyResponse.model_validate(r) for r in results],
+            data=[VotacaoPartidoMunZonaResponse.model_validate(r) for r in results],
         )
     except Exception as e:
         logger.error(f"❌ Erro no endpoint de partidos: {e}", exc_info=True)
         raise HTTPException(500, f"Erro ao buscar votação por partido: {str(e)}")
 
 
-@router.get("/parties/{party_vote_id}", response_model=VotationPartyResponse)
+@router.get("/parties/{party_vote_id}", response_model=VotacaoPartidoMunZonaPaginatedResponse)
 async def get_details_party_vote(
         party_vote_id: UUID,
         db: AsyncSession = Depends(get_db_session),
@@ -153,7 +153,7 @@ async def get_details_party_vote(
                 "Registro de votação por partido não encontrado",
             )
 
-        return VotationPartyResponse.from_orm(party_vote)
+        return VotacaoPartidoMunZonaResponse.from_orm(party_vote)
 
     except Exception as e:
         logger.error(f"Erro ao buscar detalhes de votação por partido: {str(e)}")
