@@ -12,7 +12,8 @@ from app.api.v1 import (
     votacao_candidato_routes,
     votacao_partido_routes,
     perfil_comparecimento_abstencao_routes,
-    ckan_routes
+    consulta_candidato_routes,
+    ckan_routes,
 )
 from app.core.config import settings
 from app.core.database import init_db, create_database_if_not_exists
@@ -74,6 +75,7 @@ app.add_middleware(
 app.include_router(votacao_candidato_routes.router, prefix="/api/v1", tags=["Votação por Candidato - TSE"])
 app.include_router(votacao_partido_routes.router, prefix="/api/v1", tags=["Votação por Partido - TSE"])
 app.include_router(perfil_comparecimento_abstencao_routes.router, prefix="/api/v1", tags=["Perfil de Votação - TSE"])
+app.include_router(consulta_candidato_routes.router, prefix="/api/v1", tags=["Consulta de Candidatos - TSE"])
 app.include_router(ckan_routes.router, prefix="/api/v1", tags=["CKAN - TSE"])
 
 if __name__ == "__main__":

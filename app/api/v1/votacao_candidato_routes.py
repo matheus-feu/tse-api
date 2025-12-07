@@ -13,7 +13,7 @@ from app.filters.votacao_candidato_filters import VotacaoCandidatoFilter
 from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZona
 from app.schemas.votacao_candidato_schema import VotacaoCandidatoMunZonaResponse
 
-router = APIRouter(prefix="/candidatos")
+router = APIRouter(prefix="/votacao_candidatos")
 
 
 @router.get(

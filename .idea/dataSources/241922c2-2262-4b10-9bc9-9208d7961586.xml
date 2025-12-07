@@ -3,9 +3,8 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>2791</IntrospectionStateNumber>
       <ServerVersion>15.4</ServerVersion>
-      <StartupTime>1765076910</StartupTime>
+      <StartupTime>1765082625</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -1426,18 +1425,17 @@ false posixrules
 13186||10|C|G
 13186||-9223372036854775808|U|G
 13186||10|U|G</Grants>
-      <IntrospectionStateNumber>2791</IntrospectionStateNumber>
       <ObjectId>24403</ObjectId>
       <OwnerName>root</OwnerName>
     </database>
-    <role id="5" parent="1" name="pg_checkpoint">
-      <ObjectId>4544</ObjectId>
-    </role>
-    <role id="6" parent="1" name="pg_database_owner">
+    <role id="5" parent="1" name="pg_database_owner">
       <ObjectId>6171</ObjectId>
     </role>
-    <role id="7" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
+    <role id="6" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
+    </role>
+    <role id="7" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
     </role>
     <role id="8" parent="1" name="pg_monitor">
       <ObjectId>3373</ObjectId>
@@ -1445,29 +1443,29 @@ false posixrules
 3375
 3377</RoleGrants>
     </role>
-    <role id="9" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
-    </role>
-    <role id="10" parent="1" name="pg_read_all_settings">
+    <role id="9" parent="1" name="pg_read_all_settings">
       <ObjectId>3374</ObjectId>
     </role>
-    <role id="11" parent="1" name="pg_read_all_stats">
+    <role id="10" parent="1" name="pg_read_all_stats">
       <ObjectId>3375</ObjectId>
+    </role>
+    <role id="11" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
     </role>
     <role id="12" parent="1" name="pg_read_server_files">
       <ObjectId>4569</ObjectId>
     </role>
-    <role id="13" parent="1" name="pg_signal_backend">
+    <role id="13" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
+    </role>
+    <role id="14" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
+    </role>
+    <role id="15" parent="1" name="pg_signal_backend">
       <ObjectId>4200</ObjectId>
     </role>
-    <role id="14" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
-    </role>
-    <role id="15" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
-    </role>
-    <role id="16" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
+    <role id="16" parent="1" name="pg_checkpoint">
+      <ObjectId>4544</ObjectId>
     </role>
     <role id="17" parent="1" name="root">
       <BypassRls>1</BypassRls>
@@ -13601,9 +13599,6 @@ unpackaged</AvailableUpdates>
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <LastIntrospectionL1Xid>2791</LastIntrospectionL1Xid>
-      <LastIntrospectionL2Xid>2791</LastIntrospectionL2Xid>
-      <LastIntrospectionL3Xid>2791</LastIntrospectionL3Xid>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
       <LastIntrospectionLocalTimestamp>2025-12-07.03:28:33</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
@@ -35624,7 +35619,7 @@ unpackaged</AvailableUpdates>
     <table id="6225" parent="785" name="consulta_cand">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>24409</ObjectId>
-      <StateNumber>2728</StateNumber>
+      <StateNumber>5185</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>root</OwnerName>
     </table>
@@ -73821,44 +73816,44 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18129" parent="6225" name="cd_cargo">
       <Position>15</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>5131</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18130" parent="6225" name="ds_cargo">
       <Position>16</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(13)|0s</StoredType>
+      <StateNumber>5153</StateNumber>
+      <StoredType>varchar(20)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18131" parent="6225" name="sq_candidato">
       <Position>17</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>5134</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18132" parent="6225" name="nr_candidato">
       <Position>18</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>5139</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18133" parent="6225" name="nm_candidato">
       <Position>19</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(57)|0s</StoredType>
+      <StateNumber>5202</StateNumber>
+      <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18134" parent="6225" name="nm_urna_candidato">
       <Position>20</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(30)|0s</StoredType>
+      <StateNumber>5166</StateNumber>
+      <StoredType>varchar(50)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18135" parent="6225" name="nm_social_candidato">
       <Position>21</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(30)|0s</StoredType>
+      <StateNumber>5169</StateNumber>
+      <StoredType>varchar(50)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18136" parent="6225" name="nr_cpf_candidato">
@@ -73899,8 +73894,8 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18142" parent="6225" name="sg_partido">
       <Position>28</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(13)|0s</StoredType>
+      <StateNumber>5158</StateNumber>
+      <StoredType>varchar(20)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18143" parent="6225" name="nm_partido">
@@ -73935,26 +73930,26 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18148" parent="6225" name="sq_coligacao">
       <Position>34</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>5142</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18149" parent="6225" name="nm_coligacao">
       <Position>35</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(54)|0s</StoredType>
+      <StateNumber>5181</StateNumber>
+      <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18150" parent="6225" name="ds_composicao_coligacao">
       <Position>36</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(136)|0s</StoredType>
+      <StateNumber>5174</StateNumber>
+      <StoredType>varchar(300)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18151" parent="6225" name="sg_uf_nascimento">
       <Position>37</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(2)|0s</StoredType>
+      <StateNumber>5147</StateNumber>
+      <StoredType>varchar(15)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18152" parent="6225" name="dt_nascimento">
@@ -73965,9 +73960,9 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18153" parent="6225" name="nr_titulo_eleitoral_candidato">
       <Position>39</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>integer|0s</StoredType>
-      <TypeId>23</TypeId>
+      <StateNumber>5136</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
     </column>
     <column id="18154" parent="6225" name="cd_genero">
       <Position>40</Position>
@@ -73977,8 +73972,8 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18155" parent="6225" name="ds_genero">
       <Position>41</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(9)|0s</StoredType>
+      <StateNumber>5150</StateNumber>
+      <StoredType>varchar(20)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18156" parent="6225" name="cd_grau_instrucao">
@@ -74013,8 +74008,8 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18161" parent="6225" name="ds_cor_raca">
       <Position>47</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(13)|0s</StoredType>
+      <StateNumber>5156</StateNumber>
+      <StoredType>varchar(20)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18162" parent="6225" name="cd_ocupacao">
@@ -74025,8 +74020,8 @@ unpackaged</AvailableUpdates>
     </column>
     <column id="18163" parent="6225" name="ds_ocupacao">
       <Position>49</Position>
-      <StateNumber>2728</StateNumber>
-      <StoredType>varchar(70)|0s</StoredType>
+      <StateNumber>5183</StateNumber>
+      <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="18164" parent="6225" name="cd_sit_tot_turno">
@@ -74046,7 +74041,7 @@ unpackaged</AvailableUpdates>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24414</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>2728</StateNumber>
+      <StateNumber>5185</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
