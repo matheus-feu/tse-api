@@ -6,7 +6,7 @@ from pydantic import Field
 from app.models.resultados.votacao_candidato_munzona import VotacaoCandidatoMunZona
 
 
-class VotationCandidateFilter(Filter):
+class VotacaoCandidatoFilter(Filter):
     """Filtros para consulta de votação por candidato."""
 
     ano_eleicao: Optional[int] = Field(None, description="Ano da eleição")
@@ -42,39 +42,3 @@ class VotationCandidateFilter(Filter):
         ]
         search_field_name = "search"
         search_model_fields = ["nm_candidato"]
-
-
-class VotationPartyFilter(Filter):
-    """Filtros para consulta de votação por partido."""
-
-    ano_eleicao: Optional[int] = Field(None, description="Ano da eleição")
-    sg_uf: Optional[str] = Field(None, description="Sigla do estado")
-    nr_partido: Optional[int] = Field(None, description="Número do partido")
-
-    sg_partido__ilike: Optional[str] = Field(None, description="Busca na sigla do partido")
-    ds_cargo__ilike: Optional[str] = Field(None, description="Busca no cargo")
-
-    qt_votos_nominais__gte: Optional[int] = Field(None, description="Votos >= valor")
-    qt_votos_nominais__lte: Optional[int] = Field(None, description="Votos <= valor")
-
-    order_by: Optional[List[str]] = Field(
-        default=["-qt_votos_nominais"],
-        description="Ordenação (ex: 'sg_partido', '-qt_votos_nominais')"
-    )
-
-    search: Optional[str] = Field(
-        None,
-        description="Busca geral em nome do partido"
-    )
-
-    class Constants(Filter.Constants):
-        model = VotacaoCandidatoMunZona
-
-        ordering_field_name = "order_by"
-        ordering_fields = [
-            "sg_partido",
-            "qt_votos_nominais",
-            "ds_cargo"
-        ]
-        search_field_name = "search"
-        search_model_fields = ["sg_partido"]

@@ -4,12 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="feat: add date parsing validator for election date in votation schemas">
+    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="refactor: update votation models and response schemas for consistency">
+      <change afterPath="$PROJECT_DIR$/app/api/v1/perfil_comparecimento_abstencao_routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/filters/votacao_candidato_filters.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/perfil_comparecimento_abstencao_schema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/votacao_partido_schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/v1/resultados/candidates_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/resultados/candidates_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/resultados/votacao_partido_munzona.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/resultados/votacao_partido_munzona.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/votation_schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/votation_schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/ckan/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/votacao_partido_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/ckan/ckan_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/ckan_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/resultados/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/filters/perfil_comparecimento_abstencao_filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/v1/resultados/candidates_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/v1/votacao_candidato_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/filters/votation_filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/filters/votacao_partido_filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/comparecimento_abstencao/perfil_comparecimento_abstencao.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/comparecimento_abstencao/perfil_comparecimento_abstencao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/resultados/votacao_candidato_munzona.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/resultados/votacao_candidato_munzona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/candidates_repository.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/parties_repository.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/votation_repository.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/votation_schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/votacao_candidato_schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,11 +93,11 @@
       <recent name="$PROJECT_DIR$/app/models/prestacao_contas" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/api/v1" />
       <recent name="$PROJECT_DIR$/app/api/v1/ckan" />
       <recent name="$PROJECT_DIR$/app/api/v1/resultados" />
       <recent name="$PROJECT_DIR$/app/services" />
       <recent name="$PROJECT_DIR$/app/models/comparecimento_abstencao" />
-      <recent name="$PROJECT_DIR$/app/models/candidatos" />
     </key>
   </component>
   <component name="RunManager">
@@ -140,7 +154,9 @@
       <workItem from="1764955495148" duration="403000" />
       <workItem from="1764955913890" duration="290000" />
       <workItem from="1765046519336" duration="2579000" />
-      <workItem from="1765052052962" duration="7585000" />
+      <workItem from="1765052052962" duration="7609000" />
+      <workItem from="1765076884498" duration="5458000" />
+      <workItem from="1765082610443" duration="1519000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure with core files and configurations">
       <option name="closed" value="true" />
@@ -206,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765058468344</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="refactor: update votation models and response schemas for consistency">
+      <option name="closed" value="true" />
+      <created>1765062071682</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1765062071682</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -222,7 +246,8 @@
     <MESSAGE value="add new models for election data, including voting details and financial records" />
     <MESSAGE value="refactor: rename files and update import paths for better organization" />
     <MESSAGE value="feat: add date parsing validator for election date in votation schemas" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add date parsing validator for election date in votation schemas" />
+    <MESSAGE value="refactor: update votation models and response schemas for consistency" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: update votation models and response schemas for consistency" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -244,7 +269,7 @@
     <SUITE FILE_PATH="coverage/ckan_tse_api_$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1764876191353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$main.coverage" NAME="main Coverage Results" MODIFIED="1763489755204" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$generate_model_from_csv.coverage" NAME="generate_model_from_csv Coverage Results" MODIFIED="1764871624170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/tools" />
-    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1765059488010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1765084018559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

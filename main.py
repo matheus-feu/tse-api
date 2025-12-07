@@ -3,12 +3,17 @@ from contextlib import asynccontextmanager
 
 from alembic.config import Config
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from alembic import command
-from app.api.v1.ckan import ckan_routes
-from app.api.v1.resultados import candidates_routes
+from app.api.v1 import (
+    votacao_candidato_routes,
+    votacao_partido_routes,
+    perfil_comparecimento_abstencao_routes,
+    ckan_routes
+)
 from app.core.config import settings
 from app.core.database import init_db, create_database_if_not_exists
 
@@ -30,6 +35,9 @@ logger.add(
 async def lifespan(app: FastAPI):
     """Gerenciador de contexto para o ciclo de vida da aplicação FastAPI."""
     logger.info(f"🚀 Iniciando {settings.APP_NAME} v{settings.APP_VERSION}")
+
+    add_pagination(app)
+    logger.info("✅ Paginação adicionada")
 
     await create_database_if_not_exists()
     logger.info("✅ Banco de dados verificado/criado")
@@ -63,7 +71,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(candidates_routes.router, prefix="/api/v1", tags=["Apuração - TSE"])
+app.include_router(votacao_candidato_routes.router, prefix="/api/v1", tags=["Votação por Candidato - TSE"])
+app.include_router(votacao_partido_routes.router, prefix="/api/v1", tags=["Votação por Partido - TSE"])
+app.include_router(perfil_comparecimento_abstencao_routes.router, prefix="/api/v1", tags=["Perfil de Votação - TSE"])
 app.include_router(ckan_routes.router, prefix="/api/v1", tags=["CKAN - TSE"])
 
 if __name__ == "__main__":
