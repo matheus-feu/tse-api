@@ -13,7 +13,7 @@ class ConsultaCandComplementar(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    ano_eleicao = Column(Integer, nullable=True)
+    ano_eleicao = Column(Integer, nullable=True, unique=True)
     cd_eleicao = Column(Integer, nullable=True)
     sq_candidato = Column(Integer, nullable=True)
     cd_detalhe_situacao_cand = Column(Integer, nullable=True)

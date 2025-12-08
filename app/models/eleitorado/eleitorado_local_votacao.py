@@ -15,7 +15,7 @@ class EleitoradoLocalVotacao(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_eleicao = Column(Integer, nullable=True)
+    aa_eleicao = Column(Integer, nullable=True, unique=True)
     dt_eleicao = Column(String(10), nullable=True)
     ds_eleicao = Column(String(8), nullable=True)
     nr_turno = Column(Integer, nullable=True)

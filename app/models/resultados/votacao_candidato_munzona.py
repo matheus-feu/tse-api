@@ -15,7 +15,7 @@ class VotacaoCandidatoMunZona(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    ano_eleicao = Column(Integer, nullable=True)
+    ano_eleicao = Column(Integer, nullable=True, unique=True)
     cd_tipo_eleicao = Column(Integer, nullable=True)
     nm_tipo_eleicao = Column(String(30), nullable=True)
     nr_turno = Column(Integer, nullable=True)

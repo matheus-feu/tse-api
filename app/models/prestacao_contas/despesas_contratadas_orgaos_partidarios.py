@@ -15,7 +15,7 @@ class DespesasContratadasOrgaosPartidarios(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_eleicao = Column(Integer, nullable=True)
+    aa_eleicao = Column(Integer, nullable=True, unique=True)
     cd_tipo_eleicao = Column(Integer, nullable=True)
     nm_tipo_eleicao = Column(String(9), nullable=True)
     tp_prestacao_contas = Column(String(24), nullable=True)

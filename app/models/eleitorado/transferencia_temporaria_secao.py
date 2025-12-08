@@ -15,7 +15,7 @@ class TransferenciaTemporariaSecao(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_eleicao = Column(Integer, nullable=True)
+    aa_eleicao = Column(Integer, nullable=True, unique=True)
     nr_turno = Column(Integer, nullable=True)
     tp_tte = Column(String(23), nullable=True)
     tp_abrangencia_tte = Column(String(9), nullable=True)

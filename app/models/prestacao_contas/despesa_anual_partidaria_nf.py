@@ -14,7 +14,7 @@ class DespesaAnualPartidariaNf(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_exercicio = Column(Integer, nullable=True)
+    aa_exercicio = Column(Integer, nullable=True, unique=True)
     tp_despesa = Column(String(1), nullable=True)
     sg_uf = Column(String(2), nullable=True)
     sq_despesa = Column(Text, nullable=True)
