@@ -15,7 +15,7 @@ class PerfilComparecimentoAbstencao(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    ano_eleicao = Column(Integer, nullable=True, unique=True)
+    ano_eleicao = Column(Integer, nullable=True)
     nr_turno = Column(Integer, nullable=True)
     sg_uf = Column(String(2), nullable=True)
     cd_municipio = Column(Integer, nullable=True)

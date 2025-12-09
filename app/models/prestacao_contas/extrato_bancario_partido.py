@@ -12,7 +12,7 @@ class ExtratoBancarioPartido(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_referencia = Column(Integer, nullable=True, unique=True)
+    aa_referencia = Column(Integer, nullable=True)
     sg_partido = Column(String(12), nullable=True)
     nm_esfera = Column(String(9), nullable=True)
     nr_cnpj = Column(Integer, nullable=True)

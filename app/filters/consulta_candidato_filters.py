@@ -9,7 +9,6 @@ from app.models.candidatos.consulta_candidato import ConsultaCandidatos
 class ConsultaCandidatoFilter(Filter):
     """Filtros para consulta de candidatos."""
 
-    # filtros exatos
     ano_eleicao: Optional[int] = Field(None, description="Ano da eleição")
     sg_uf: Optional[str] = Field(None, description="Sigla do estado")
     cd_cargo: Optional[int] = Field(None, description="Código do cargo")
@@ -20,7 +19,6 @@ class ConsultaCandidatoFilter(Filter):
     cd_cor_raca: Optional[int] = Field(None, description="Código cor/raça")
     cd_ocupacao: Optional[int] = Field(None, description="Código ocupação")
 
-    # buscas parciais (ILIKE)
     nm_candidato__ilike: Optional[str] = Field(
         None, description="Nome do candidato (busca parcial, ILIKE)"
     )
@@ -34,13 +32,11 @@ class ConsultaCandidatoFilter(Filter):
         None, description="Descrição do cargo (busca parcial, ILIKE)"
     )
 
-    # ordenação
     order_by: Optional[List[str]] = Field(
         default=["nm_candidato"],
         description="Ordenação (ex: 'nm_candidato', '-nr_candidato')",
     )
 
-    # busca geral
     search: Optional[str] = Field(
         None,
         description="Busca geral em nome do candidato e partido",

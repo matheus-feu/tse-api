@@ -12,7 +12,7 @@ class DespesasPagasCandidatos(Base):
 
     dt_geracao = Column(String(10), nullable=True)
     hh_geracao = Column(String(8), nullable=True)
-    aa_eleicao = Column(Integer, nullable=True, unique=True)
+    aa_eleicao = Column(Integer, nullable=True)
     cd_tipo_eleicao = Column(Integer, nullable=True)
     nm_tipo_eleicao = Column(String(11), nullable=True)
     cd_eleicao = Column(Integer, nullable=True)

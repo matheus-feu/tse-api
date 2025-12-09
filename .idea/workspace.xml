@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="refactor: reorganize routes and filters for voting candidates and parties; enhance response schemas">
+    <list default="true" id="2f503310-f246-4941-91bf-635fdb58d72f" name="Changes" comment="refactor: update election year fields to be unique across multiple models for data integrity">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/241922c2-2262-4b10-9bc9-9208d7961586/storage_v2/_src_/database/tse.xsEBAA/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/filters/consulta_candidato_filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/filters/consulta_candidato_filters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/candidatos/bem_cand.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/candidatos/bem_cand.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/candidatos/consulta_cand_complementar.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/candidatos/consulta_cand_complementar.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/candidatos/consulta_candidato.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/candidatos/consulta_candidato.py" afterDir="false" />
@@ -78,7 +82,7 @@
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/havokz/PycharmProjects/api-tse/app/models/eleitorado&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -86,7 +90,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
@@ -129,8 +133,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-PY-252.28238.29" />
-        <option value="bundled-python-sdk-a101402ee41c-968fe969f28a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.28238.29" />
+        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-PY-253.28294.336" />
+        <option value="bundled-python-sdk-0978a7220b69-9867c7d4c0a4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.28294.336" />
       </set>
     </attachedChunks>
   </component>
@@ -166,6 +170,10 @@
       <workItem from="1765076884498" duration="5458000" />
       <workItem from="1765082610443" duration="4578000" />
       <workItem from="1765087611701" duration="1969000" />
+      <workItem from="1765198818595" duration="1799000" />
+      <workItem from="1765207105990" duration="394000" />
+      <workItem from="1765293088738" duration="8292000" />
+      <workItem from="1765312802904" duration="1272000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project structure with core files and configurations">
       <option name="closed" value="true" />
@@ -247,7 +255,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765084203990</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="refactor: update election year fields to be unique across multiple models for data integrity">
+      <option name="closed" value="true" />
+      <created>1765199024175</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1765199024175</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,7 +281,8 @@
     <MESSAGE value="feat: add date parsing validator for election date in votation schemas" />
     <MESSAGE value="refactor: update votation models and response schemas for consistency" />
     <MESSAGE value="refactor: reorganize routes and filters for voting candidates and parties; enhance response schemas" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: reorganize routes and filters for voting candidates and parties; enhance response schemas" />
+    <MESSAGE value="refactor: update election year fields to be unique across multiple models for data integrity" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: update election year fields to be unique across multiple models for data integrity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -287,7 +304,7 @@
     <SUITE FILE_PATH="coverage/ckan_tse_api_$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1764876191353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$main.coverage" NAME="main Coverage Results" MODIFIED="1763489755204" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ckan_tse_api_$generate_model_from_csv.coverage" NAME="generate_model_from_csv Coverage Results" MODIFIED="1764871624170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/tools" />
-    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1765087845093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/api_tse$ckan_tse_api_.coverage" NAME="ckan-tse-api  Coverage Results" MODIFIED="1765308288411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
